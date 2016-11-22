@@ -18,7 +18,7 @@ def main(args=None):
     #connect to mysql server
     TABLE_NAME = 'citations'
     DATABASE_NAME ='cglp'
-    PASSWORD = 'Measha4589$'
+    PASSWORD = 'cglp'
     ENGINE = helpers.connectDb(DATABASE_NAME,PASSWORD)
 
     for country in COUNTRY_LIST:
