@@ -54,4 +54,5 @@ if __name__ == "__main__":
             DATA_FOLDER = a
         elif o in ["-n","--country_name"]:
             country = a
-    get_references(REGEX_FOLDER,DATA_FOLDER)
+    print REGEX_FOLDER
+    # get_references(REGEX_FOLDER,DATA_FOLDER)
