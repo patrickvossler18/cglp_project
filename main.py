@@ -8,7 +8,7 @@ import foreign_court_citations
 from tqdm import tqdm
 import getopt
 
-def get_references(REGEX_FOLDER=REGEX_FOLDER,DATA_FOLDER=DATA_FOLDER):
+def get_references(REGEX_FOLDER,DATA_FOLDER):
     #create regex tables just once
     soft_law_regex_table,soft_law_regex_df = regex_tables.createSoftLawRegexDf(folder_path=REGEX_FOLDER,file_name='softlaw_regex_20161003.csv')
     intl_court_regex_table,intl_court_regex_df = regex_tables.createIntlCourtsRegexDf(folder_path=REGEX_FOLDER,file_name= 'intl_courts_regex_20161003.csv')
