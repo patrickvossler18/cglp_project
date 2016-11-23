@@ -54,6 +54,4 @@ if __name__ == "__main__":
             DATA_FOLDER = a
         elif o in ["-n","--country_name"]:
             country = a
-    print REGEX_FOLDER
-    print DATA_FOLDER        
-    # main()
+    main(REGEX_FOLDER,DATA_FOLDER)
