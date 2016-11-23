@@ -6,6 +6,7 @@ import intl_court_citations
 import treaty_citations
 import foreign_court_citations
 from tqdm import tqdm
+import getopt
 
 def main(args=None):
     #create regex tables just once
