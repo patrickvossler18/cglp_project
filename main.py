@@ -56,4 +56,4 @@ if __name__ == "__main__":
             country = a
     print REGEX_FOLDER
     print DATA_FOLDER        
-    main()
+    # main()
