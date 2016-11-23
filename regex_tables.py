@@ -14,7 +14,6 @@ from sqlalchemy import create_engine
 import helpers
 
 def createSoftLawRegexDf(folder_path=None,file_name=None):
-    folder_path= "/Users/patrick/Dropbox/Fall 2016/SPEC/Regex tables/"
     #Get regex table
     filename = 'softlaw_regex_20161003.csv'
     regex_table = []
@@ -29,7 +28,6 @@ def createSoftLawRegexDf(folder_path=None,file_name=None):
     return regex_table,regex_df
 
 def createForeignCourtsDf(folder_path=None,file_name=None):
-    folder_path= "/Users/patrick/Dropbox/Fall 2016/SPEC/Regex tables/"
     #Get regex table
     filename = 'foreign_courts_regex_20161007.csv'
     regex_table = []
@@ -48,7 +46,6 @@ def createForeignCourtsDf(folder_path=None,file_name=None):
     return regex_result,regex_df
 
 def createIntlCourtsRegexDf(folder_path=None,file_name=None):
-    folder_path= "/Users/patrick/Dropbox/Fall 2016/SPEC/Regex tables/"
     #Get regex table
     filename = 'intl_courts_regex_20161003.csv'
     regex_table = []
@@ -63,7 +60,6 @@ def createIntlCourtsRegexDf(folder_path=None,file_name=None):
     return regex_table,regex_df
 
 def createTreatiesRegexDf(folder_path=None,file_name=None):
-    folder_path= "/Users/patrick/Dropbox/Fall 2016/SPEC/Regex tables/"
     #Get regex table
     filename = 'treaties_regex_20161003.csv'
     regex_table = []

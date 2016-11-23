@@ -40,7 +40,8 @@ if __name__ == "__main__":
     TABLE_NAME = 'citations'
     DATABASE_NAME ='cglp'
     PASSWORD = 'cglp'
-
+    
+    
     for o,a in options:
         if o in ["-r","--regex_folder"]:
             REGEX_FOLDER = a
@@ -55,4 +56,4 @@ if __name__ == "__main__":
         elif o in ["-n","--country_name"]:
             country = a
     print REGEX_FOLDER
-    # get_references(REGEX_FOLDER,DATA_FOLDER)
+    get_references(REGEX_FOLDER,DATA_FOLDER)
