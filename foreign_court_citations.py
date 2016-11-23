@@ -102,7 +102,7 @@ def insertForeignCourtsData(country_name,year,file,regex_df,regex_table,mysql_ta
     try:
         foreignCourts = getForeignCourtsData(text=fileText,country_name=country_name,year=year,regex_df=regex_df,regex_list=regex_table)
         if not foreignCourts.empty:
-            foreignCourts.to_sql(name=mysql_table,con=connection_info,flavor='mysql',index=False,if_exists='append')
+            foreignCourts.to_sql(name=mysql_table,con=connection_info,index=False,if_exists='append')
     except Exception, e:
         print e
         raise
