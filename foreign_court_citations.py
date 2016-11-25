@@ -80,7 +80,8 @@ def getForeignCourtsData(text,regex_df,regex_list,country_name=None,year=None):
         merged_results = merged_results.rename(columns={'matches': 'context'})
         merged_results.drop(['level_1','level_0'],inplace=True,axis=1)
         merged_results['year'] = year
-        # merged_results = merged_results.rename_axis(None)
+        merged_results = merged_results.rename_axis(None)
+        merged_results.drop(['index'],inplace=True,axis=1)
         return merged_results
     else:
         return pd.DataFrame()
