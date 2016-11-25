@@ -55,7 +55,7 @@ def createIntlCourtsRegexDf(folder_path=None,file_name=None):
     regex_test = dict((row[0],row[1:]) for row in regex_table)
     regex_df = pd.Series(regex_test)
     regex_df = pd.DataFrame(regex_df,columns = ['info'])
-    regex_df[['citation_type', 'intl_ct_id']] = regex_df['info'].apply(pd.Series)
+    regex_df[['citation_type', 'intl_crt_id']] = regex_df['info'].apply(pd.Series)
     regex_df.drop('info',inplace=True,axis=1)
     return regex_table,regex_df
 
