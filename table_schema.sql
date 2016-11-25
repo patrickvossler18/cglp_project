@@ -1,4 +1,3 @@
-
 CREATE TABLE `citations`(
 `case_id` int(11) NOT NULL AUTO_INCREMENT,
 `citation_type` int(11) DEFAULT NULL,
@@ -13,6 +12,5 @@ CREATE TABLE `citations`(
 `softlaw_id` int(11) DEFAULT NULL,
 `context` varchar(2000) DEFAULT NULL,
 `source_file_name` varchar(100) DEFAULT NULL,
-`index` int(11) DEFAULT NULL,
 PRIMARY KEY (`case_id`)
 )ENGINE=MyISAM DEFAULT CHARSET=utf8;

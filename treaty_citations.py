@@ -56,7 +56,7 @@ def getTreatyData(text,regex_df,regex_list,country_name=None,year=None):
         regex_df: citation info for each country in dataframe form
         regex_list: list of lists of search terms and court names
     '''
-    regex_treaty_results = findallTreatyMatches(helpers.findAllInstances,text,regex_list,0)
+    regex_treaty_results = findallTreatyMatches(helpers.findAllInstances,text,regex_list)
     if regex_treaty_results:
         regex_dict = dict((row[0],row[1:]) for row in regex_treaty_results)
         dataset = pd.Series(regex_dict)
@@ -65,8 +65,8 @@ def getTreatyData(text,regex_df,regex_list,country_name=None,year=None):
         merged_results = pd.concat([pd.DataFrame(dict(zip(merged_results.columns,merged_results.ix[i]))) for i in range(len(merged_results))])
         merged_results = merged_results.rename(columns={'matches': 'context'})
         merged_results['year'] = year
-        # merged_results = merged_results.rename_axis(None)
-        # merged_results.drop(['level_1','level_0'],inplace=True,axis=1)
+        merged_results = merged_results.rename_axis(None)
+        merged_results.drop(['index'],inplace=True,axis=1)
         return merged_results
     else:
         return pd.DataFrame()
