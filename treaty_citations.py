@@ -65,7 +65,6 @@ def getTreatyData(text,regex_df,regex_list,country_name=None,year=None):
         merged_results = pd.concat([pd.DataFrame(dict(zip(merged_results.columns,merged_results.ix[i]))) for i in range(len(merged_results))])
         merged_results = merged_results.rename(columns={'matches': 'context'})
         merged_results['year'] = year
-        merged_results = merged_results.reset_index()
         # merged_results = merged_results.rename_axis(None)
         # merged_results.drop(['level_1','level_0'],inplace=True,axis=1)
         return merged_results

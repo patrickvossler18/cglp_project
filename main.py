@@ -36,7 +36,7 @@ if __name__ == "__main__":
         sys.exit("Getopt Error: " + str(error))
 
     # set up default values
-    COUNTRY_LIST = ['Austria','Australia','Botswana','Canada','Chile','Colombia','France','Germany' ,'Ireland']
+    COUNTRY_LIST = ['Australia','Austria','Botswana','Canada','Chile','Colombia','France','Germany' ,'Ireland']
     TABLE_NAME = 'citations'
     DATABASE_NAME ='cglp'
     PASSWORD = 'cglp'
