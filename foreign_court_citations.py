@@ -55,7 +55,7 @@ def findallForeignCourtMatches(findAllInstances,text,search_terms,term_idx=0,cou
                             results.append(match)
     return results
 
-def getForeignCourtsData(text,regex_df,regex_list,country_name=None,year=None):
+def getForeignCourtsData(text,regex_df,regex_list,file,country_name=None,year=None):
     '''
     Inputs:
         text: raw string or parsed html
@@ -80,6 +80,7 @@ def getForeignCourtsData(text,regex_df,regex_list,country_name=None,year=None):
         merged_results = merged_results.rename(columns={'matches': 'context'})
         merged_results.drop(['level_1','level_0'],inplace=True,axis=1)
         merged_results['year'] = year
+        merged_results['source_file_name'] = os.path.basename(file)
         merged_results = merged_results.rename_axis(None)
         # merged_results.drop(['index'],inplace=True,axis=1)
         return merged_results
@@ -101,7 +102,7 @@ def insertForeignCourtsData(country_name,year,file,regex_df,regex_table,mysql_ta
 
     fileText = helpers.getFileText(file,html=False)
     try:
-        foreignCourts = getForeignCourtsData(text=fileText,country_name=country_name,year=year,regex_df=regex_df,regex_list=regex_table)
+        foreignCourts = getForeignCourtsData(text=fileText,country_name=country_name,year=year,regex_df=regex_df,regex_list=regex_table, file=file)
         if not foreignCourts.empty:
             foreignCourts.to_sql(name=mysql_table,con=connection_info,index=False,if_exists='append')
     except Exception, e:

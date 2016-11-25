@@ -50,7 +50,7 @@ def findallSoftLawMatches(findAllInstances,text,search_terms,term_idx=0):
                     results.append(match)
     return results
 
-def getSoftLawData(text,regex_df,regex_list,country_name=None,year=None):
+def getSoftLawData(text,regex_df,regex_list,file,country_name=None,year=None):
     '''
     Inputs:
         text: raw string or parsed html
@@ -68,6 +68,7 @@ def getSoftLawData(text,regex_df,regex_list,country_name=None,year=None):
         merged_results = pd.concat([pd.DataFrame(dict(zip(merged_results.columns,merged_results.ix[i]))) for i in range(len(merged_results))])
         merged_results = merged_results.rename(columns={'matches': 'context'})
         merged_results['year'] = year
+        merged_results['source_file_name'] = os.path.basename(file)
         merged_results = merged_results.rename_axis(None)
         merged_results.drop(['index'],inplace=True,axis=1)
         return merged_results
@@ -88,7 +89,7 @@ def insertSoftLawData(country_name,year,file,regex_df,regex_table,mysql_table,co
     '''     
     fileText = helpers.getFileText(file,html=False)
     try:
-        softLaws = getSoftLawData(text=fileText,country_name=country_name,year=year,regex_df=regex_df,regex_list=regex_table)
+        softLaws = getSoftLawData(text=fileText,country_name=country_name,year=year,regex_df=regex_df,regex_list=regex_table,file=file)
         if not softLaws.empty:
             softLaws.to_sql(name=mysql_table,con=connection_info,index=False,if_exists='append')
     except Exception, e:
