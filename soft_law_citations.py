@@ -11,55 +11,51 @@ import csv
 import pandas as pd
 from tqdm import tqdm
 import itertools
+import esm
 from sqlalchemy import create_engine
 import helpers
 import regex_tables
 
-def findallSoftLawMatches(findAllInstances,text,search_terms,term_idx=0):
+def findallSoftLawMatches(text,softlaw_names):
     '''
     What to do about self references? Keep or skip?
     Goes through each country in regex table and returns the index of the matches as a tuple
     If there are matches, get +/- 10 characters (or words?) around the result and check if other term present
     For +/- 10 words use r"(?i)((?:\S+\s+){0,10})\b" + re.escape(search_term)+ r"\b\s*((?:\S+\s+){0,10})"
     '''
-    matched_results = []
     results = []
-    #Go through search terms and find the indicies of all matches for each term
-    for row in search_terms:
-        search_term = row[term_idx]
-        matches = list(helpers.findAllInstances(text,search_term))
-        if matches:
-            matched_results.append([row,matches])
-    # If we have matched results, get the 10 words around the soft law name
-    if len(matched_results) > 0:
-        for row in matched_results:
-            law_name = row[0][0]
-            law_string = re.compile(r"(?i)((?:\S+\s+){0,10})\b" + re.escape(law_name)+ r"\b\s*((?:\S+\s+){0,10})",re.IGNORECASE)
-            match_locations = row[1]
-            for loc in match_locations:
-                buffer_area = 500+len(law_name)
-                lower_bound = loc - buffer_area
-                if (loc- buffer_area) < 0:
-                    lower_bound =  0
-                upper_bound = loc + buffer_area
-                search_area = text[lower_bound:upper_bound]
-                context = law_string.search(search_area)
-                if context:
-                    context_string = context.group()
-                    match = [law_name,context_string]
-                    results.append(match)
+    matches = softlaw_names.query(text)
+    for match in matches:
+        law_name = match[1]
+        law_string = re.compile(r"(?i)((?:\S+\s+){0,10})\b" + re.escape(law_name)+ r"\b\s*((?:\S+\s+){0,10})",re.IGNORECASE)
+        #use start of match
+        match_location = match[0][0]
+        buffer_area = 500 + len(law_name)
+        lower_bound = (match_location) - buffer_area
+        upper_bound = (match_location) + buffer_area
+        if (match_location- buffer_area) < 0:
+            lower_bound =  0
+        if (match_location + buffer_area) > len(text):
+            upper_bound = len(text)
+        search_area = text[lower_bound:upper_bound]
+        context = law_string.search(search_area)
+        if context:
+            context_string = context.group()
+            match = [law_name,context_string]
+            results.append(match)
+    results = [list(x) for x in set(tuple(x) for x in results)]
     return results
 
-def getSoftLawData(text,regex_df,regex_list,file,country_name=None,year=None):
+def getSoftLawData(text,regex_df,softlaw_names,file,country_name=None,year=None):
     '''
     Inputs:
         text: raw string or parsed html
         country_name: optional for now but will be used if excluding self-references
         year: optional
         regex_df: citation info for each country in dataframe form
-        regex_list: list of lists of search terms and court names
+        softlaw_names: list of lists of search terms and court names
     '''
-    regex_sl_results = findallSoftLawMatches(helpers.findAllInstances,text,regex_list,0)
+    regex_sl_results = findallSoftLawMatches(text,softlaw_names)
     if regex_sl_results:
         regex_dict = dict((row[0],row[1:]) for row in regex_sl_results)
         dataset = pd.Series(regex_dict)
@@ -75,13 +71,13 @@ def getSoftLawData(text,regex_df,regex_list,file,country_name=None,year=None):
     else:
         return pd.DataFrame()
 
-def insertSoftLawData(country_name,year,file,regex_df,regex_table,mysql_table,connection_info):
+def insertSoftLawData(country_name,year,file,regex_df,softlaw_names,mysql_table,connection_info):
     '''
     Inputs:
         country_name: name of the source country
         file: a string of the file path to the decision
         regex_df: regex dataframe used to merge in metadata information for matches 
-        regex_table: regex table in list form used to find matches
+        softlaw_names: regex table in list form used to find matches
         mysql_table: mysql table name to insert matches into
         connection_info: mysql table connection info
     Output:
@@ -89,7 +85,7 @@ def insertSoftLawData(country_name,year,file,regex_df,regex_table,mysql_table,co
     '''     
     fileText = helpers.getFileText(file,html=False)
     try:
-        softLaws = getSoftLawData(text=fileText,country_name=country_name,year=year,regex_df=regex_df,regex_list=regex_table,file=file)
+        softLaws = getSoftLawData(text=fileText,country_name=country_name,year=year,regex_df=regex_df,softlaw_names=softlaw_names,file=file)
         if not softLaws.empty:
             softLaws.to_sql(name=mysql_table,con=connection_info,index=False,if_exists='append')
     except Exception, e:

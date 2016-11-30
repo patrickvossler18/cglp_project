@@ -12,60 +12,57 @@ import pandas as pd
 from tqdm import tqdm
 import itertools
 from sqlalchemy import create_engine
+import esm
 import helpers
 import regex_tables
 
-def findallForeignCourtMatches(findAllInstances,text,search_terms,term_idx=0,court_idx=2):
+def findallForeignCourtMatches(text,country_names,court_names):
     '''
     What to do about self references? Keep or skip?
     Goes through each country in regex table and returns the index of the matches as a tuple
     If there are matches, get +/- 10 characters (or words?) around the result and check if other term present
     For +/- 10 words use r"(?i)((?:\S+\s+){0,10})\b" + re.escape(search_term)+ r"\b\s*((?:\S+\s+){0,10})"
     '''
-    matched_results = []
     results = []
-    #Go through search terms and find the indicies of all matches for each term
-    for row in search_terms:
-        search_term = row[term_idx]
-        matches = list(helpers.findAllInstances(text,search_term))
-        if matches:
-            matched_results.append([row,matches])
-    # If we have matched results, get the 10 words around the country name and see if the court name is there
-    if len(matched_results) > 0:
-        for row in matched_results:
-            country_name = row[0][0]
-            country_string = re.compile(r"(?i)((?:\S+\s+){0,10})\b" + re.escape(country_name)+ r"\b\s*((?:\S+\s+){0,10})",re.IGNORECASE)
-            court_names = row[0][1]
-            match_locations = row[1]
-            for court_name in court_names:
-                court_string = re.compile( r'\b%s\b' % court_name,re.IGNORECASE)
-                for loc in match_locations:
-                    buffer_area = 500+len(country_name)
-                    lower_bound = loc - buffer_area
-                    if (loc- buffer_area) < 0:
-                        lower_bound =  0
-                    upper_bound = loc + buffer_area
-                    search_area = text[lower_bound:upper_bound]
-                    context = country_string.search(search_area)
-                    if context:
-                        context_string = context.group()
-                        find_court = court_string.search(context_string)
-                        if find_court:
-                            match = [country_name,court_name,context_string]
-                            results.append(match)
+    matches = country_names.query(text)
+    for match in matches:
+        country_name = match[1]
+        country_string = re.compile(r"(?i)((?:\S+\s+){0,10})\b" + re.escape(country_name)+ r"\b\s*((?:\S+\s+){0,10})",re.IGNORECASE)
+        #use start of match
+        match_location = match[0][0]
+        buffer_area = 500 + len(country_name)
+        lower_bound = (match_location) - buffer_area
+        upper_bound = (match_location) + buffer_area
+        if (match_location- buffer_area) < 0:
+            lower_bound =  0
+        if (match_location + buffer_area) > len(text):
+            upper_bound = len(text)
+        search_area = text[lower_bound:upper_bound]
+        context = country_string.search(search_area)
+        if context:
+            context_string = context.group()
+            find_court = court_names.query(context_string)
+            court_match = None
+            for result in find_court:
+                if result[1][1] != ' ' and result[1][0] == country_name.strip():
+                    court_match = result[1][1]
+            if court_match:
+                match = [country_name,court_match,context_string]
+                results.append(match)
+    results = [list(x) for x in set(tuple(x) for x in results)]
     return results
 
-def getForeignCourtsData(text,regex_df,regex_list,file,country_name=None,year=None):
+def getForeignCourtsData(text,regex_df,country_names,court_names,file,country_name=None,year=None):
     '''
     Inputs:
         text: raw string or parsed html
         country_name: optional for now but will be used if excluding self-references
         year: optional
         regex_df: citation info for each country in dataframe form
-        regex_list: list of lists of search terms and court names
+        country_names: list of lists of search terms and court names
     '''
     #Store matches in list
-    regex_ct_results = findallForeignCourtMatches(helpers.findAllInstances,text,regex_list,0,2)
+    regex_ct_results = findallForeignCourtMatches(text,country_names,court_names)
     if regex_ct_results:
         #If there are matches, reshape the results into a dataframe, merge with regex_df and clean up for inserting into table
         def extract_key(v):
@@ -87,7 +84,7 @@ def getForeignCourtsData(text,regex_df,regex_list,file,country_name=None,year=No
     else:
         return pd.DataFrame()
 
-def insertForeignCourtsData(country_name,year,file,regex_df,regex_table,mysql_table,connection_info):
+def insertForeignCourtsData(country_name,year,file,regex_df,country_names,court_names,mysql_table,connection_info):
     '''
     Inputs:
         country_name: name of the source country
@@ -102,7 +99,7 @@ def insertForeignCourtsData(country_name,year,file,regex_df,regex_table,mysql_ta
 
     fileText = helpers.getFileText(file,html=False)
     try:
-        foreignCourts = getForeignCourtsData(text=fileText,country_name=country_name,year=year,regex_df=regex_df,regex_list=regex_table, file=file)
+        foreignCourts = getForeignCourtsData(text=fileText,country_name=country_name,year=year,regex_df=regex_df,country_names=country_names,court_names=court_names, file=file)
         if not foreignCourts.empty:
             foreignCourts.to_sql(name=mysql_table,con=connection_info,index=False,if_exists='append')
     except Exception, e:
@@ -111,13 +108,13 @@ def insertForeignCourtsData(country_name,year,file,regex_df,regex_table,mysql_ta
 
 
 # #create foreign courts regex tables
-# regex_table,regex_df = createForeignCourtsDf(folder_path="/Users/patrick/Dropbox/Fall 2016/SPEC/Regex tables/",file_name='foreign_courts_regex_20161007.csv')
+# regex_table,regex_df = regex_tables.createForeignCourtsDf(folder_path="/Users/patrick/Dropbox/Fall 2016/SPEC/Regex tables/",file_name='foreign_courts_regex_20161007.csv')
 # #connect to mysql server
 # table_name = 'citations'
 # password = 'Measha4589$'
 # engine = helpers.connectDb(table_name,password)
 # #create dictionary of file paths
-# countryFiles = helpers.getCountryFiles("/Users/patrick/Dropbox/Fall 2016/SPEC/CGLP Data","Australia")
+# countryFiles = helpers.getCountryFiles("/Users/patrick/Dropbox/Fall 2016/SPEC/CGLP Data","Ireland")
 # #go through dictionary of files and insert into mysql table
 # insertForeignCourtsData("Australia",countryFiles,regex_df,regex_table,table_name,engine)
 

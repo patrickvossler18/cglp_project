@@ -14,6 +14,7 @@ import pandas as pd
 from tqdm import tqdm
 import itertools
 from sqlalchemy import create_engine
+import esm
 import helpers
 
 def connectDb(db_name,db_password):

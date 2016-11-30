@@ -10,10 +10,10 @@ import getopt
 
 def get_references(REGEX_FOLDER,DATA_FOLDER):
     #create regex tables just once
-    soft_law_regex_table,soft_law_regex_df = regex_tables.createSoftLawRegexDf(folder_path=REGEX_FOLDER,file_name='softlaw_regex_20161003.csv')
-    intl_court_regex_table,intl_court_regex_df = regex_tables.createIntlCourtsRegexDf(folder_path=REGEX_FOLDER,file_name= 'intl_courts_regex_20161003.csv')
-    treaties_regex_table,treaties_regex_df = regex_tables.createTreatiesRegexDf(folder_path=REGEX_FOLDER,file_name= 'treaties_regex_20161003.csv')
-    fc_regex_table,fc_regex_df = regex_tables.createForeignCourtsDf(folder_path=REGEX_FOLDER,file_name='foreign_courts_regex_20161007.csv')
+    softlaw_names,soft_law_regex_df = regex_tables.createSoftLawRegexDf(folder_path=REGEX_FOLDER,file_name='softlaw_regex_20161003.csv')
+    intl_court_names,intl_court_regex_df = regex_tables.createIntlCourtsRegexDf(folder_path=REGEX_FOLDER,file_name= 'intl_courts_regex_20161003.csv')
+    treaty_names,treaties_regex_df = regex_tables.createTreatiesRegexDf(folder_path=REGEX_FOLDER,file_name= 'treaties_regex_20161003.csv')
+    fc_country_names,fc_court_names,fc_regex_df = regex_tables.createForeignCourtsDf(folder_path=REGEX_FOLDER,file_name='foreign_courts_regex_20161007.csv')
 
     #connect to mysql server
     ENGINE = helpers.connectDb(DATABASE_NAME,PASSWORD)
@@ -24,10 +24,10 @@ def get_references(REGEX_FOLDER,DATA_FOLDER):
         for year, folder in countryFiles.items():
             #go through dictionary of files and insert into mysql table
             for file in tqdm(folder):
-                soft_law_citations.insertSoftLawData(country,year,file,soft_law_regex_df,soft_law_regex_table,TABLE_NAME,ENGINE)
-                intl_court_citations.insertIntlCourtData(country,year,file,intl_court_regex_df,intl_court_regex_table,TABLE_NAME,ENGINE)
-                treaty_citations.insertTreatyData(country,year,file,treaties_regex_df,treaties_regex_table,TABLE_NAME,ENGINE)
-                foreign_court_citations.insertForeignCourtsData(country,year,file,fc_regex_df,fc_regex_table,TABLE_NAME,ENGINE)
+                soft_law_citations.insertSoftLawData(country,year,file,soft_law_regex_df,softlaw_names,TABLE_NAME,ENGINE)
+                intl_court_citations.insertIntlCourtData(country,year,file,intl_court_regex_df,intl_court_names,TABLE_NAME,ENGINE)
+                treaty_citations.insertTreatyData(country,year,file,treaties_regex_df,treaty_names,TABLE_NAME,ENGINE)
+                foreign_court_citations.insertForeignCourtsData(country,year,file,fc_regex_df,fc_country_names,fc_court_names,TABLE_NAME,ENGINE)
 
 if __name__ == "__main__":
     try:
