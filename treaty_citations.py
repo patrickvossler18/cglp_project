@@ -52,7 +52,7 @@ def getTreatyData(text,regex_df,treaty_names,file,country_name=None,year=None):
         regex_df: citation info for each country in dataframe form
         treaty_names: list of lists of search terms and court names
     '''
-    regex_treaty_results = findallTreatyMatches(helpers.findAllInstances,text,treaty_names)
+    regex_treaty_results = findallTreatyMatches(text,treaty_names)
     if regex_treaty_results:
         regex_dict = dict((row[0],row[1:]) for row in regex_treaty_results)
         dataset = pd.Series(regex_dict)
