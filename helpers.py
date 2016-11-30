@@ -15,6 +15,8 @@ from tqdm import tqdm
 import itertools
 from sqlalchemy import create_engine
 import esm
+from pyth.plugins.rtf15.reader import Rtf15Reader
+from pyth.plugins.plaintext.writer import PlaintextWriter
 import helpers
 
 def connectDb(db_name,db_password):
@@ -49,6 +51,10 @@ def getFileText(file_path,html=False):
         for i in range(0,num_pages):
             pageObj = pdfReader.getPage(i)
             page_text = page_text +" "+ pageObj.extractText()
+        return page_text
+    if file_extension == ".rtf":
+        doc = Rtf15Reader.read(open(file_path))
+        page_text = PlaintextWriter.write(doc).getvalue()
         return page_text
 
 def getCountryFiles(folder_path,country_name):
