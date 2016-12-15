@@ -71,7 +71,7 @@ def getSoftLawData(text,regex_df,softlaw_names,file,country_name=None,year=None)
     else:
         return pd.DataFrame()
 
-def insertSoftLawData(country_name,year,file,regex_df,softlaw_names,mysql_table,connection_info):
+def insertSoftLawData(country_name,year,fileText,regex_df,softlaw_names,mysql_table,connection_info):
     '''
     Inputs:
         country_name: name of the source country
@@ -83,7 +83,6 @@ def insertSoftLawData(country_name,year,file,regex_df,softlaw_names,mysql_table,
     Output:
         None, inserts matches into mysql table
     '''     
-    fileText = helpers.getFileText(file,html=False)
     try:
         softLaws = getSoftLawData(text=fileText,country_name=country_name,year=year,regex_df=regex_df,softlaw_names=softlaw_names,file=file)
         if not softLaws.empty:

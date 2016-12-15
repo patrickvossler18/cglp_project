@@ -68,7 +68,7 @@ def getIntlCourtData(text,regex_df,intl_court_names,file,country_name=None,year=
     else:
         return pd.DataFrame()
 
-def insertIntlCourtData(country_name,year,file,regex_df,intl_court_names,mysql_table,connection_info):
+def insertIntlCourtData(country_name,year,fileText,regex_df,intl_court_names,mysql_table,connection_info):
     '''
     Inputs:
         country_name: name of the source country
@@ -80,7 +80,6 @@ def insertIntlCourtData(country_name,year,file,regex_df,intl_court_names,mysql_t
     Output:
         None, inserts matches into mysql table
     ''' 
-    fileText = helpers.getFileText(file,html=False)
     try:
         courtData = getIntlCourtData(text=fileText,country_name=country_name,year=year,regex_df=regex_df,intl_court_names=intl_court_names,file=file)
         if not courtData.empty:

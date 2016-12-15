@@ -84,7 +84,7 @@ def getForeignCourtsData(text,regex_df,country_names,court_names,file,country_na
     else:
         return pd.DataFrame()
 
-def insertForeignCourtsData(country_name,year,file,regex_df,country_names,court_names,mysql_table,connection_info):
+def insertForeignCourtsData(country_name,year,fileText,regex_df,country_names,court_names,mysql_table,connection_info):
     '''
     Inputs:
         country_name: name of the source country
@@ -96,8 +96,6 @@ def insertForeignCourtsData(country_name,year,file,regex_df,country_names,court_
     Output:
         None, inserts matches into mysql table
     '''     
-
-    fileText = helpers.getFileText(file,html=False)
     try:
         foreignCourts = getForeignCourtsData(text=fileText,country_name=country_name,year=year,regex_df=regex_df,country_names=country_names,court_names=court_names, file=file)
         if not foreignCourts.empty:
@@ -114,7 +112,7 @@ def insertForeignCourtsData(country_name,year,file,regex_df,country_names,court_
 # password = 'Measha4589$'
 # engine = helpers.connectDb(table_name,password)
 # #create dictionary of file paths
-# countryFiles = helpers.getCountryFiles("/Users/patrick/Dropbox/Fall 2016/SPEC/CGLP Data","Ireland")
+# countryFiles = helpers.getCountryFiles("/Users/patrick/Dropbox/Fall 2016/SPEC/CGLP Data","Colombia")
 # #go through dictionary of files and insert into mysql table
 # insertForeignCourtsData("Australia",countryFiles,regex_df,regex_table,table_name,engine)
 

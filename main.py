@@ -24,10 +24,15 @@ def get_references(REGEX_FOLDER,DATA_FOLDER):
         for year, folder in countryFiles.items():
             #go through dictionary of files and insert into mysql table
             for file in tqdm(folder):
-                soft_law_citations.insertSoftLawData(country,year,file,soft_law_regex_df,softlaw_names,TABLE_NAME,ENGINE)
-                intl_court_citations.insertIntlCourtData(country,year,file,intl_court_regex_df,intl_court_names,TABLE_NAME,ENGINE)
-                treaty_citations.insertTreatyData(country,year,file,treaties_regex_df,treaty_names,TABLE_NAME,ENGINE)
-                foreign_court_citations.insertForeignCourtsData(country,year,file,fc_regex_df,fc_country_names,fc_court_names,TABLE_NAME,ENGINE)
+                try:
+                    fileText = helpers.getFileText(file,html=False)
+                    soft_law_citations.insertSoftLawData(country,year,fileText,soft_law_regex_df,softlaw_names,TABLE_NAME,ENGINE)
+                    intl_court_citations.insertIntlCourtData(country,year,fileText,intl_court_regex_df,intl_court_names,TABLE_NAME,ENGINE)
+                    treaty_citations.insertTreatyData(country,year,fileText,treaties_regex_df,treaty_names,TABLE_NAME,ENGINE)
+                    foreign_court_citations.insertForeignCourtsData(country,year,fileText,fc_regex_df,fc_country_names,fc_court_names,TABLE_NAME,ENGINE)
+                except Exception, e:
+                    print e
+                    pass
 
 if __name__ == "__main__":
     try:

@@ -68,7 +68,7 @@ def getTreatyData(text,regex_df,treaty_names,file,country_name=None,year=None):
     else:
         return pd.DataFrame()
 
-def insertTreatyData(country_name,year,file,regex_df,treaty_names,mysql_table,connection_info):
+def insertTreatyData(country_name,year,fileText,regex_df,treaty_names,mysql_table,connection_info):
     '''
     Inputs:
         country_name: name of the source country
@@ -80,7 +80,6 @@ def insertTreatyData(country_name,year,file,regex_df,treaty_names,mysql_table,co
     Output:
         None, inserts matches into mysql table
     '''     
-    fileText = helpers.getFileText(file,html=False)
     try:
         treatyData = getTreatyData(text=fileText,country_name=country_name,year=year,regex_df=regex_df,treaty_names=treaty_names,file=file)
         if not treatyData.empty:
