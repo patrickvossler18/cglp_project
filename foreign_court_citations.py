@@ -79,6 +79,7 @@ def getForeignCourtsData(text,regex_df,country_names,court_names,file,country_df
         merged_results['year'] = year
         merged_results['source_file_name'] = os.path.basename(file)
         ###UNTESTED####
+        #Use country id dataframe to assign a source country id based upon the country name from the file structure
         merged_results['source_country_id'] = country_df.loc[country_name][0]
         merged_results = merged_results.rename_axis(None)
         # merged_results.drop(['index'],inplace=True,axis=1)
@@ -86,7 +87,7 @@ def getForeignCourtsData(text,regex_df,country_names,court_names,file,country_df
     else:
         return pd.DataFrame()
 
-def insertForeignCourtsData(country_name,year,file,fileText,regex_df,country_names,court_names,mysql_table,connection_info):
+def insertForeignCourtsData(country_name,year,file,fileText,regex_df,country_names,court_names,mysql_table,connection_info,country_df):
     '''
     Inputs:
         country_name: name of the source country
@@ -99,7 +100,7 @@ def insertForeignCourtsData(country_name,year,file,fileText,regex_df,country_nam
         None, inserts matches into mysql table
     '''     
     try:
-        foreignCourts = getForeignCourtsData(text=fileText,country_name=country_name,year=year,regex_df=regex_df,country_names=country_names,court_names=court_names, file=file)
+        foreignCourts = getForeignCourtsData(text=fileText,country_name=country_name,year=year,regex_df=regex_df,country_names=country_names,court_names=court_names,file=file,country_df=country_df)
         if not foreignCourts.empty:
             foreignCourts.to_sql(name=mysql_table,con=connection_info,index=False,if_exists='append')
     except Exception, e:
