@@ -103,6 +103,7 @@ def createCountryDf(folder_path=None,file_name=None):
     country_dict = dict((row[0],row[1]) for row in country_table)
     country_dict = pd.Series(country_dict)
     country_df = pd.DataFrame(country_dict)
-    country_df.reset_index(level=0, inplace=True)
-    country_df.columns = ['country','country_id']
+    country_df.columns = ['country_id']
+    # country_df.reset_index(level=0, inplace=True)
+    # country_df.columns = ['country','country_id']
     return country_df

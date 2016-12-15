@@ -46,7 +46,7 @@ def findallSoftLawMatches(text,softlaw_names):
     results = [list(x) for x in set(tuple(x) for x in results)]
     return results
 
-def getSoftLawData(text,regex_df,softlaw_names,file,country_name=None,year=None):
+def getSoftLawData(text,regex_df,softlaw_names,file,country_df,country_name=None,year=None):
     '''
     Inputs:
         text: raw string or parsed html
@@ -65,13 +65,16 @@ def getSoftLawData(text,regex_df,softlaw_names,file,country_name=None,year=None)
         merged_results = merged_results.rename(columns={'matches': 'context'})
         merged_results['year'] = year
         merged_results['source_file_name'] = os.path.basename(file)
+        ###UNTESTED####
+        #Use country id dataframe to assign a source country id based upon the country name from the file structure
+        merged_results['source_country_id'] = country_df.loc[country_name][0]
         merged_results = merged_results.rename_axis(None)
         merged_results.drop(['index'],inplace=True,axis=1)
         return merged_results
     else:
         return pd.DataFrame()
 
-def insertSoftLawData(country_name,year,fileText,regex_df,softlaw_names,mysql_table,connection_info):
+def insertSoftLawData(country_name,year,file,fileText,regex_df,softlaw_names,mysql_table,connection_info,country_df):
     '''
     Inputs:
         country_name: name of the source country
@@ -84,7 +87,7 @@ def insertSoftLawData(country_name,year,fileText,regex_df,softlaw_names,mysql_ta
         None, inserts matches into mysql table
     '''     
     try:
-        softLaws = getSoftLawData(text=fileText,country_name=country_name,year=year,regex_df=regex_df,softlaw_names=softlaw_names,file=file)
+        softLaws = getSoftLawData(text=fileText,country_name=country_name,year=year,regex_df=regex_df,softlaw_names=softlaw_names,file=file,country_df=country_df)
         if not softLaws.empty:
             softLaws.to_sql(name=mysql_table,con=connection_info,index=False,if_exists='append')
     except Exception, e:

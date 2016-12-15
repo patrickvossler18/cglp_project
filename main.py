@@ -14,6 +14,7 @@ def get_references(REGEX_FOLDER,DATA_FOLDER):
     intl_court_names,intl_court_regex_df = regex_tables.createIntlCourtsRegexDf(folder_path=REGEX_FOLDER,file_name= 'intl_courts_regex_20161003.csv')
     treaty_names,treaties_regex_df = regex_tables.createTreatiesRegexDf(folder_path=REGEX_FOLDER,file_name= 'treaties_regex_20161003.csv')
     fc_country_names,fc_court_names,fc_regex_df = regex_tables.createForeignCourtsDf(folder_path=REGEX_FOLDER,file_name='foreign_courts_regex_20161007.csv')
+    country_df = regex_tables.createCountryDf(folder_path=REGEX_FOLDER,file_name='country_ids_20161210.csv')
 
     #connect to mysql server
     ENGINE = helpers.connectDb(DATABASE_NAME,PASSWORD)
@@ -28,7 +29,7 @@ def get_references(REGEX_FOLDER,DATA_FOLDER):
                     fileText = helpers.getFileText(file,html=False)
                     soft_law_citations.insertSoftLawData(country,year,file,fileText,soft_law_regex_df,softlaw_names,TABLE_NAME,ENGINE)
                     intl_court_citations.insertIntlCourtData(country,year,file,fileText,intl_court_regex_df,intl_court_names,TABLE_NAME,ENGINE)
-                    treaty_citations.insertTreatyData(country,year,file,fileText,treaties_regex_df,treaty_names,TABLE_NAME,ENGINE)
+                    treaty_citations.insertTreatyData(country,year,file,fileText,treaties_regex_df,treaty_names,TABLE_NAME,ENGINE,country_df)
                     foreign_court_citations.insertForeignCourtsData(country,year,file,fileText,fc_regex_df,fc_country_names,fc_court_names,TABLE_NAME,ENGINE)
                 except Exception, e:
                     print e
