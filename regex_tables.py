@@ -93,3 +93,16 @@ def createTreatiesRegexDf(folder_path=None,file_name=None):
     regex_df[['citation_type', 'treaty_id']] = regex_df['info'].apply(pd.Series)
     regex_df.drop('info',inplace=True,axis=1)
     return treaty_names,regex_df
+
+def createCountryDf(folder_path=None,file_name=None):
+    filename = 'country_ids_20161210.csv'
+    country_table = []
+    reader = helpers.unicode_csv_reader(open(folder_path+filename))
+    for row in reader:
+        country_table.append(row)
+    country_dict = dict((row[0],row[1]) for row in country_table)
+    country_dict = pd.Series(country_dict)
+    country_df = pd.DataFrame(country_dict)
+    country_df.reset_index(level=0, inplace=True)
+    country_df.columns = ['country','country_id']
+    return country_df
