@@ -52,7 +52,7 @@ def findallForeignCourtMatches(text,country_names,court_names):
     results = [list(x) for x in set(tuple(x) for x in results)]
     return results
 
-def getForeignCourtsData(text,regex_df,country_names,court_names,file,country_dfcountry_name=None,year=None):
+def getForeignCourtsData(text,regex_df,country_names,court_names,file,country_df,country_name=None,year=None):
     '''
     Inputs:
         text: raw string or parsed html
