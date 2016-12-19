@@ -71,7 +71,7 @@ def getTreatyData(text,regex_df,treaty_names,file,country_df,country_name=None,y
     else:
         return pd.DataFrame()
 
-def insertTreatyData(country_name,year,file,fileText,regex_df,treaty_names,mysql_table,connection_info,country_df,file):
+def insertTreatyData(country_name,year,file,fileText,regex_df,treaty_names,mysql_table,connection_info,country_df):
     '''
     Inputs:
         country_name: name of the source country
