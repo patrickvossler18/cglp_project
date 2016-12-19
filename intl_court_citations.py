@@ -71,7 +71,7 @@ def getIntlCourtData(text,regex_df,intl_court_names,file,country_df,country_name
     else:
         return pd.DataFrame()
 
-def insertIntlCourtData(country_name,year,file,fileText,regex_df,intl_court_names,mysql_table,connection_info):
+def insertIntlCourtData(country_name,year,file,fileText,regex_df,intl_court_names,mysql_table,connection_info,country_df):
     '''
     Inputs:
         country_name: name of the source country
