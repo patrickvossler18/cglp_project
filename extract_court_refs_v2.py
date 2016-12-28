@@ -436,8 +436,26 @@ def extractMalawiCourtReferences(file_path):
 	try:
 		file_content = helpers.getFileText(file_path,html=False)
 		html_text = lh.fromstring(file_content)
-		title_text = html_text.find(".//h1[@class='title']")
 		ParticipantName = ''
 		CaseId = ''
 		DecisionDate = ''
+		title_text = html_text.find(".//h1[@class='title']")
+		if title_text is not None:
+			ParticipantName = title_text.text_content().strip()
+		caseidPattern = re.compile("\\[\\d{4}\\]\\s\\bMWSC\\s\\d+", re.IGNORECASE)
+		caseidString = caseidPattern.findall(html_text.text_content())
+		if len(caseidString) > 0:
+			CaseId = caseidString[0]
+		decisionDateNode = html_text.find('.//div[@class="field-item odd"]/span')
+		# if decisionDateNode.text_content():
+		if decisionDateNode is not None:
+			DecisionDate = decisionDateNode.text_content().split(",")[1].strip()
+		return CaseId,DecisionDate,ParticipantName
+	except Exception, e:
+		print e
+		raise
+
+for year,folder in files.items():
+	for file in folder:
+		extractMalawiCourtReferences(file)
 

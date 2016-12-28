@@ -47,6 +47,7 @@ def getFileText(file_path,html=False):
     if file_extension == ".pdf":
         pdf_content = open(file_path, "rb")
         pdfReader = PyPDF2.PdfFileReader(pdf_content)
+        num_pages = pdfReader.getNumPages()
         page_text = ""
         for i in range(0,num_pages):
             pageObj = pdfReader.getPage(i)
