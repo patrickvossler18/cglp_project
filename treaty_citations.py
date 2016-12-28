@@ -87,8 +87,8 @@ def insertTreatyData(country_name,year,file,fileText,regex_df,treaty_names,mysql
         treatyData = getTreatyData(text=fileText,country_name=country_name,year=year,regex_df=regex_df,treaty_names=treaty_names,file=file,country_df=country_df)
         if not treatyData.empty:
             treatyData.to_sql(name=mysql_table,con=connection_info,index=False,if_exists='append')
-    except Exception, e:
-        print e
+    except Exception, error:
+        print error
         raise
 
 # #create regex tables

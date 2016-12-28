@@ -90,8 +90,8 @@ def insertSoftLawData(country_name,year,file,fileText,regex_df,softlaw_names,mys
         softLaws = getSoftLawData(text=fileText,country_name=country_name,year=year,regex_df=regex_df,softlaw_names=softlaw_names,file=file,country_df=country_df)
         if not softLaws.empty:
             softLaws.to_sql(name=mysql_table,con=connection_info,index=False,if_exists='append')
-    except Exception, e:
-        print e
+    except Exception, error:
+        print error
         raise
 
 # #create regex tables
