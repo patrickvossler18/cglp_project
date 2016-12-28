@@ -52,7 +52,11 @@ def getFileText(file_path,html=False):
         for i in range(0,num_pages):
             pageObj = pdfReader.getPage(i)
             page_text = page_text +" "+ pageObj.extractText()
-        return page_text
+        #Need to check for pdfs that are just scanned images
+        if len(page_text) <= num_pages:
+            return None
+        else:
+            return page_text
     if file_extension == ".rtf":
         doc = Rtf15Reader.read(open(file_path, encoding="utf8"))
         page_text = PlaintextWriter.write(doc).getvalue()

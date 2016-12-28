@@ -433,29 +433,27 @@ def extractLesothoCourtReferences(file_path):
 		raise
 
 def extractMalawiCourtReferences(file_path):
+	ParticipantName = ''
+	CaseId = ''
+	DecisionDate = ''
 	try:
 		file_content = helpers.getFileText(file_path,html=False)
-		html_text = lh.fromstring(file_content)
-		ParticipantName = ''
-		CaseId = ''
-		DecisionDate = ''
-		title_text = html_text.find(".//h1[@class='title']")
-		if title_text is not None:
-			ParticipantName = title_text.text_content().strip()
-		caseidPattern = re.compile("\\[\\d{4}\\]\\s\\bMWSC\\s\\d+", re.IGNORECASE)
-		caseidString = caseidPattern.findall(html_text.text_content())
-		if len(caseidString) > 0:
-			CaseId = caseidString[0]
-		decisionDateNode = html_text.find('.//div[@class="field-item odd"]/span')
-		# if decisionDateNode.text_content():
-		if decisionDateNode is not None:
-			DecisionDate = decisionDateNode.text_content().split(",")[1].strip()
-		return CaseId,DecisionDate,ParticipantName
+		if file_content:
+			html_text = lh.fromstring(file_content)
+			title_text = html_text.find(".//h1[@class='title']")
+			if title_text is not None:
+				ParticipantName = title_text.text_content().strip()
+			caseidPattern = re.compile("\\[\\d{4}\\]\\s\\bMWSC\\s\\d+", re.IGNORECASE)
+			caseidString = caseidPattern.findall(html_text.text_content())
+			if len(caseidString) > 0:
+				CaseId = caseidString[0]
+			decisionDateNode = html_text.find('.//div[@class="field-item odd"]/span')
+			# if decisionDateNode.text_content():
+			if decisionDateNode is not None:
+				DecisionDate = decisionDateNode.text_content().split(",")[1].strip()
 	except Exception, e:
 		print e
 		raise
+	return CaseId,DecisionDate,ParticipantName
 
-for year,folder in files.items():
-	for file in folder:
-		extractMalawiCourtReferences(file)
 
