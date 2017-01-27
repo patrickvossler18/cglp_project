@@ -456,4 +456,73 @@ def extractMalawiCourtReferences(file_path):
 		raise
 	return CaseId,DecisionDate,ParticipantName
 
+def extractNewZealandCourtReferences(file_path):
+	ParticipantName = ''
+	CaseId = ''
+	DecisionDate = ''
+	try:
+		file_content = helpers.getFileText(file_path,html=False)
+		if file_content:
+			html_text = lh.fromstring(file_content)
+			title_text = html_text.find(".//h2[@class='make-database']")
+			if title_text is not None:
+				full_string = title_text.text_content().strip()
+				participantsEnd_idx = full_string.find('[')
+				if participantsEnd_idx > -1:
+					ParticipantName = full_string[0:participantsEnd_idx-1].strip()
+				dateStart_idx = full_string.find('(')
+				dateEnd_idx = full_string.find(')')
+				if dateStart_idx > -1 and dateEnd_idx > -1:
+					DecisionDate = full_string[dateStart_idx+1:dateEnd_idx]
+				caseIdPatternString = re.compile("SC [0-9]+|CRI [0-9]+")
+				caseIdMatcher = caseIdPatternString.findall(full_string)
+				if len(caseIdMatcher) > 0:
+					CaseId = caseIdMatcher[0]
+		return CaseId,DecisionDate,ParticipantName
+	except Exception, e:
+		print e
+		raise
+
+def extractPapaNewGuineaCourtReferences(file_path):
+	ParticipantName = ''
+	CaseId = ''
+	DecisionDate = ''
+	try:
+		file_content = helpers.getFileText(file_path,html=False)
+		if file_content:
+			html_text = lh.fromstring(file_content)
+			title_text = html_text.find(".//h2[@class='make-database']")
+			if title_text is not None:
+				full_string = title_text.text_content().strip()
+			participantsEnd_idx = full_string.find('[')
+			if participantsEnd_idx > -1:
+				ParticipantName = full_string[0:participantsEnd_idx-1].strip()
+			dateStart_idx = full_string.find('(')
+			dateEnd_idx = full_string.find(')')
+			if dateStart_idx > -1 and dateEnd_idx > -1:
+				DecisionDate = full_string[dateStart_idx+1:dateEnd_idx]
+			#Older cases use PGSC but newer cases use SC### need check for if there is SC only and if SC only use that case id
+			caseIdPatternString = re.compile("PGSC [0-9]+|CRI [0-9]+")
+			caseIdMatcher = caseIdPatternString.findall(full_string)
+			if len(caseIdMatcher) > 0:
+				CaseId = caseIdMatcher[0]
+		return CaseId,DecisionDate,ParticipantName
+	except Exception, e:
+		print e
+		raise
+
+
+
+
+
+
+
+
+
+
+
+
+for year,folder in files.items():
+		for file in folder:
+			extractPapaNewGuineaCourtReferences(file)
 
