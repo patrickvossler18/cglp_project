@@ -502,10 +502,78 @@ def extractPapaNewGuineaCourtReferences(file_path):
 			if dateStart_idx > -1 and dateEnd_idx > -1:
 				DecisionDate = full_string[dateStart_idx+1:dateEnd_idx]
 			#Older cases use PGSC but newer cases use SC### need check for if there is SC only and if SC only use that case id
-			caseIdPatternString = re.compile("PGSC [0-9]+|CRI [0-9]+")
-			caseIdMatcher = caseIdPatternString.findall(full_string)
-			if len(caseIdMatcher) > 0:
-				CaseId = caseIdMatcher[0]
+			oldCaseIdPatternString = re.compile("PGSC [0-9]+|CRI [0-9]+")
+			newCaseIdPatternString = re.compile("SC[0-9]+")
+			oldCaseIdMatcher = oldCaseIdPatternString.findall(full_string)
+			newCaseIdMatcher = newCaseIdPatternString.findall(full_string)
+			if len(oldCaseIdMatcher) > 0 and len(newCaseIdMatcher) == 0:
+				CaseId = oldCaseIdMatcher[0]
+			if len(oldCaseIdMatcher) > 0 and len(newCaseIdMatcher) > 0:
+				CaseId = newCaseIdMatcher[0]
+		return CaseId,DecisionDate,ParticipantName
+	except Exception, e:
+		print e
+		raise
+
+def extractPeruCourtReferences(file_path):
+	ParticipantName = ''
+	CaseId = ''
+	DecisionDate = ''
+	try:
+		file_content = helpers.getFileText(file_path,html=False)
+		if file_content:
+			html_text = lh.fromstring(file_content)
+			title_text = html_text.find(".//title")
+			if title_text is not None:
+				CaseId = title_text.text_content()
+			all_ps = html_text.findall(".//p")
+			extractedText = ''
+			for para in all_ps:
+				if "Lima" in para.text_content() or "En Arequipa" in para.text_content():
+					extractedText = para.text_content().lower()
+				participantString = para.text_content().find('Caso')
+				if participantString == -1:
+					participantString = para.text_content().find('CASO')
+				if participantString != -1:
+					ParticipantName = para.text_content().strip()
+			if len(ParticipantName) > 0:
+				ParticipantName = ParticipantName.upper().replace('CASO','').replace(':','')
+			if len(extractedText) > 4:
+				spanishDate = extractedText.strip()
+				splitDate = spanishDate.split(',')[1]
+				year = ''
+				if "de dos mil" in splitDate:
+					startIndex = splitDate.index('de dos mil')
+					yearString = splitDate[startIndex:]
+					yearString = yearString.replace('.','')
+					if yearString in translations.spanishtoEngDosMil.keys():
+						year = translations.spanishtoEngDosMil.get(yearString)
+					splitDate = splitDate.replace(yearString,'')	
+				if "de mil" in splitDate:
+					startIndex = splitDate.index('de mil')
+					yearString = splitDate[startIndex:]
+					yearString = yearString.replace('.','')
+					if yearString in translations.spanishtoEngDeMil.keys():
+						year = translations.spanishtoEngDeMil.get(yearString)
+					splitDate = splitDate.replace(yearString,'')
+				month = ''
+				for key,value in translations.spanishtoEngMonths.items():
+					if key.decode('utf-8') in splitDate:
+						month = value
+						monthString = key
+						splitDate = splitDate.replace(monthString,'')
+						break
+				splitDate = splitDate.replace("de", "")
+				splitDate = splitDate.replace(".", "")
+				splitDate = splitDate.replace(" ","")
+				day = ''
+				for key,value in translations.spanishtoEngNum.items():
+					if key.decode('utf-8') in splitDate:
+						day = value
+						break
+				DecisionDate = day+" "+month+" "+year
+			else:
+				DecisionDate = None
 		return CaseId,DecisionDate,ParticipantName
 	except Exception, e:
 		print e
@@ -516,13 +584,7 @@ def extractPapaNewGuineaCourtReferences(file_path):
 
 
 
-
-
-
-
-
-
 for year,folder in files.items():
 		for file in folder:
-			extractPapaNewGuineaCourtReferences(file)
+			extractPeruCourtReferences(file)
 

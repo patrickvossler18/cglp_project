@@ -112,7 +112,7 @@ def insertForeignCourtsData(country_name,year,file,fileText,regex_df,country_nam
 # regex_table,regex_df = regex_tables.createForeignCourtsDf(folder_path="/Users/patrick/Dropbox/Fall 2016/SPEC/Regex tables/",file_name='foreign_courts_regex_20161007.csv')
 # #connect to mysql server
 # table_name = 'citations'
-# password = 'Measha4589$'
+# password = ''
 # engine = helpers.connectDb(table_name,password)
 # #create dictionary of file paths
 # countryFiles = helpers.getCountryFiles("/Users/patrick/Dropbox/Fall 2016/SPEC/CGLP Data","Colombia")

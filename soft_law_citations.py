@@ -98,7 +98,7 @@ def insertSoftLawData(country_name,year,file,fileText,regex_df,softlaw_names,mys
 # regex_table,regex_df = createSoftLawRegexDf(folder_path="/Users/patrick/Dropbox/Fall 2016/SPEC/Regex tables/",file_name='softlaw_regex_20161003.csv')
 # #connect to mysql server
 # table_name = 'citations'
-# password = 'Measha4589$'
+# password = ''
 # engine = helpers.connectDb(table_name,password)
 # #create dictionary of file paths
 # countryFiles = helpers.getCountryFiles("/Users/patrick/Dropbox/Fall 2016/SPEC/CGLP Data","Australia")
