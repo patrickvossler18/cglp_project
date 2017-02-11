@@ -701,7 +701,7 @@ def extractUgandaCourtReferences(file_path):
         file_content = helpers.getFileText(file_path, html=False)
         if file_content:
             html_text = lh.fromstring(file_content)
-        div_text = html_text.findall(".//div[@class='field-item")
+        div_text = html_text.findall(".//div[@class='field-item']")
         if len(div_text) > 0:
             CaseId = div_text[1]
             DecisionDate = div_text[2]
@@ -813,9 +813,108 @@ def extractUKHouseofLordsCourtReferences(file_path):
             raise
 
 
+def extractUKPrivyCouncilCourtReferences(file_path):
+    ParticipantName = ''
+    CaseId = ''
+    DecisionDate = ''
+    if 'Privy Council' in file_path:
+        try:
+            file_content = helpers.getFileText(file_path, html=False)
+            if file_content:
+                html_text = lh.fromstring(file_content)
+            title = html_text.find(".//title")
+            if title is not None:
+                title_text = title.text_content()
+                textSplit = title_text.split("[")
+                ParticipantName = textSplit[0]
+                caseSplit = textSplit[1].split("(")
+                CaseId = "[".caseSplit[0]
+                DecisionDate = caseSplit[1]
+            return CaseId, DecisionDate, ParticipantName
+        except Exception, e:
+            print e
+            raise
+
+
+def extractUnitedStatesCourtReferences(file_path):
+    ParticipantName = ''
+    CaseId = ''
+    DecisionDate = ''
+    decisionString = None
+    try:
+        file_content = helpers.getFileText(file_path, html=False)
+        if file_content:
+            html_text = lh.fromstring(file_content.decode('utf-8', 'ignore'))
+        extractedText = html_text.find(".//center")
+        details1 = html_text.findall(".//center")
+        caseIdString = ''
+        if len(details1) > 0:
+            for center in details1:
+                if "No." in center.text_content():
+                    caseIdString = center.text_content()
+                    break
+            for center in details1:
+                if "[" in center.text_content():
+                    decisionString = center.text_content()
+                    break
+        if len(caseIdString) > 0:
+            caseSearchString = re.compile('No\.\s\d+\-\d+|No\.\s\d{2,3}|Nos\.\s\d+.+\s\d{2,3}')
+            if caseSearchString.search(caseIdString) is not None:
+                caseString = caseSearchString.search(caseIdString).group().replace('No.', '').replace('Nos.', '').strip()
+                CaseId = caseString
+            decidedDateIdx = caseIdString.find('Decided')
+            if decidedDateIdx != -1:
+                DecisionDate = caseIdString[decidedDateIdx+8:decidedDateIdx+24].replace('.', '').strip()
+        if len(caseIdString) == 0 and decisionString is not None:
+            DecisionDate = decisionString.replace('[', '').replace(']', '')
+        if extractedText is not None:
+            participantString = extractedText.text_content().strip()
+            participantSplit = participantString.split('\n')
+            for split in participantSplit:
+                if "v." in split.lower():
+                    ParticipantName = split.strip()
+                    break
+            if len(ParticipantName) > 5000:
+                ParticipantName = ''
+        return CaseId, DecisionDate, ParticipantName
+    except Exception, e:
+            print e
+            raise
+
+
+def extractZimbabweCourtReferences(file_path):
+    ParticipantName = ''
+    CaseId = ''
+    DecisionDate = ''
+    try:
+        file_content = helpers.getFileText(file_path, html=False)
+        if file_content:
+            html_text = lh.fromstring(file_content.decode('utf-8', 'ignore'))
+        all_divs = html_text.findall(".//div[@class='field-item odd']")
+        if all_divs is not None:
+            number = all_divs[0].text_content().strip()
+            caseNo = all_divs[2].text_content().strip().replace("(", "").replace(")", "")
+            decisiondate = all_divs[3].text_content().strip()
+            CaseId = caseNo
+            DecisionDate = decisiondate
+        participantTag = html_text.find(".//h1[@class='title']")
+        if participantTag is not None:
+            participant = participantTag.text_content().strip()
+            participantSplit = participant.split(" ")
+            lastWord = participantSplit[len(participantSplit) - 1]
+            if lastWord.lower() == number or lastWord.lower == "(pvt)":
+                participant = participant.replace(lastWord, "")
+            ParticipantName = participant
+        return CaseId, DecisionDate, ParticipantName
+    except Exception, e:
+            print e
+            raise
+
+
 
 
 for year, folder in files.items():
         for file in folder:
-            if 'House Of Lords' in file:
-                extractUKHouseofLordsCourtReferences(file)
+            extractZimbabweCourtReferences(file)
+for file in folder:
+    extractUnitedStatesCourtReferences(file)
