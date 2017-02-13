@@ -22,34 +22,10 @@ Filename column
 caseid
 '''
 
-countryRefFunctions = {
-    'Austria': extractAustriaCourtReferences,
-    'Australia': extractAustraliaCourtReferences,
-    'Botswana': extractBotswanaCourtReference,
-    'Canada': extractCanadaCourtReference,
-    'Chile': extractChileCourtReferences,
-    'Colombia': extractColombiaCourtReferences,
-    'France': extractFranceCourtReferences,
-    'Germany': extractGermanyCourtReferences,
-    'Ireland': extractIrelandCourtReferences
-}
-
-
-def processCountryFiles(country_name_file_dict, extraction_function):
-    country_data = {}
-    for year, folder in year_folders.items():
-        cases = []
-        for file in folder:
-            # fileText = helpers.getFileText(file,html=False)
-            court_info = extraction_function(file)
-            #insert info into mysql table
-        country_data[(country_name, year)] = cases
-    return country_data
-
 
 def extractAustriaCourtReferences(file_path):
     try:
-        file_content = open(file_path).read()
+        file_content = helpers.getFileText(file_path, html=False)
         soup = BeautifulSoup(file_content, "html.parser")
         CaseId = soup.find("p.ErlText.AlignJustify")[2].get_text()
         DecisionDate = soup.find("p.ErlText.AlignJustify")[1].get_text()
@@ -62,9 +38,8 @@ def extractAustriaCourtReferences(file_path):
 
 def extractAustraliaCourtReferences(file_path):
     try:
-        file_content = open(file_path).read()
+        file_content = helpers.getFileText(file_path, html=False)
         soup = BeautifulSoup(file_content, "html.parser")
-        html_text = soup.get_text()
         elements = soup.find('h2').get_text().split(';')
         caseAndDate = elements[len(elements)-1]
         index = len(caseAndDate)-1
@@ -84,14 +59,13 @@ def extractAustraliaCourtReferences(file_path):
 
 def extractBotswanaCourtReference(file_path):
     try:
-        file_content = open(file_path).read()
+        file_content = helpers.getFileText(file_path, html=False)
         soup = BeautifulSoup(file_content, "html.parser")
-        html_text = soup.get_text()
         textToBeExtracted = soup.find("title").get_text()
         pattern = re.compile("\\((.*?)\\)")
         matched_array = pattern.findall(textToBeExtracted)
         if len(matched_array) > 0:
-            firstIndex = textToBeExtracted.find(matched_array[len(matched_array)-2])
+            firstIndex = textToBeExtracted.find(matched_array[len(matched_array) - 2])
             if firstIndex == -1:
                 ParticipantName = textToBeExtracted
             else:
@@ -109,14 +83,12 @@ def extractBotswanaCourtReference(file_path):
 def extractCanadaCourtReference(file_path):
     try:
         file_content = helpers.getFileText(file_path, html=False)
-        # file_content = open(file_path).read()
         soup = BeautifulSoup(file_content, "html.parser")
-        html_text = soup.get_text()
         metadata = soup.find("div", {"class": "metadata"})
         tablerows = metadata.findAll('tr')
         court_data = []
         for row in tablerows:
-            info = row.find('td', {"class" : "metadata"}).get_text().strip()
+            info = row.find('td', {"class": "metadata"}).get_text().strip()
             court_data.append(info)
         ParticipantName = court_data[0]
         DecisionDate = court_data[2]
@@ -206,7 +178,7 @@ def extractColombiaCourtReferences(file_path):
         spanishDate = ''
         CaseId = ''
         for span in spans:
-            text = i.text_content()
+            text = span.text_content()
             caseidString = re.compile("\>?\\bSentencia\\b[\s\S]*?.*\d{1}", re.IGNORECASE)
             # caseidString = re.compile("\>?\\bSentencia\\b\sC\-\d+\/\d{2}", re.IGNORECASE)
             caseMatch = caseidString.findall(text)
@@ -420,7 +392,7 @@ def extractLesothoCourtReferences(file_path):
                 ParticipantName = split_text[0].strip()
                 extractedelements = split_text[len(split_text)-1].split('(')
                 ParticipantName += ' v '+extractedelements[0].strip()
-                case_match = re.search(r'\((.*?)\)',split_text[1])
+                case_match = re.search(r'\((.*?)\)', split_text[1])
                 if case_match is not None:
                     CaseId = case_match.group(1)
                 # CaseId = extractedelements[1].replace(")",'')
@@ -547,7 +519,7 @@ def extractPeruCourtReferences(file_path):
                 if participantString != -1:
                     ParticipantName = para.text_content().strip()
             if len(ParticipantName) > 0:
-                ParticipantName = ParticipantName.upper().replace('CASO', '').replace(':','')
+                ParticipantName = ParticipantName.upper().replace('CASO', '').replace(':', '')
             if len(extractedText) > 4:
                 spanishDate = extractedText.strip()
                 splitDate = spanishDate.split(',')[1]
@@ -910,6 +882,47 @@ def extractZimbabweCourtReferences(file_path):
             print e
             raise
 
+
+def extractMalaysiaCourtReferences(file_path):
+    pass
+
+
+def extractNigeriaCourtReferences(file_path):
+    pass
+
+
+def extractSouthAfricaCourtReferences(file_path):
+    pass
+
+
+countryRefFunctions = {
+    'Austria': extractAustriaCourtReferences,
+    'Australia': extractAustraliaCourtReferences,
+    'Botswana': extractBotswanaCourtReference,
+    'Canada': extractCanadaCourtReference,
+    'Chile': extractChileCourtReferences,
+    'Colombia': extractColombiaCourtReferences,
+    'France': extractFranceCourtReferences,
+    'Germany': extractGermanyCourtReferences,
+    'Ireland': extractIrelandCourtReferences,
+    'Latvia': extractLatviaCourtReferences,
+    'Lesotho': extractLesothoCourtReferences,
+    'Malawi': extractMalawiCourtReferences,
+    'Malaysia': extractMalaysiaCourtReferences,
+    'New Zealand': extractNewZealandCourtReferences,
+    'Nigeria': extractNigeriaCourtReferences,
+    'Papua New Guinea': extractPapaNewGuineaCourtReferences,
+    'Peru': extractPeruCourtReferences,
+    'Philippines': extractPhilippinesCourtReferences,
+    'South Africa': extractSouthAfricaCourtReferences,
+    'Switzerland': extractSwitzerlandCourtReferences,
+    'Uganda': extractUgandaCourtReferences,
+    'UK': [extractUKSupremeCourtReferences,
+           extractUKHouseofLordsCourtReferences,
+           extractUKPrivyCouncilCourtReferences],
+    'USA': extractUnitedStatesCourtReferences,
+    'Zimbabwe': extractZimbabweCourtReferences
+}
 
 
 
