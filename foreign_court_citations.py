@@ -54,7 +54,7 @@ def findallForeignCourtMatches(text, country_names, court_names):
     return results
 
 
-def getForeignCourtsData(text, regex_df, country_names, court_names, file,
+def getForeignCourtsData(text, regex_df, country_names, court_names, id_num, file,
                          country_df, country_name=None, year=None):
     '''
     Inputs:
@@ -82,6 +82,7 @@ def getForeignCourtsData(text, regex_df, country_names, court_names, file,
         merged_results.drop(['level_1', 'level_0'], inplace=True, axis=1)
         merged_results['year'] = year
         merged_results['source_file_name'] = os.path.basename(file)
+        merged_results['id'] = id_num
         ###UNTESTED####
         # Use country id dataframe to assign a source country id based upon the country name from the file structure
         merged_results['source_country_id'] = country_df.loc[country_name][0]
@@ -93,7 +94,7 @@ def getForeignCourtsData(text, regex_df, country_names, court_names, file,
 
 
 def insertForeignCourtsData(country_name, year, file, fileText, regex_df,
-                            country_names, court_names, mysql_table,
+                            country_names, court_names, id_num, mysql_table,
                             connection_info, country_df):
     '''
     Inputs:
@@ -112,6 +113,7 @@ def insertForeignCourtsData(country_name, year, file, fileText, regex_df,
                                              year=year, regex_df=regex_df,
                                              country_names=country_names,
                                              court_names=court_names,
+                                             id_num=id_num,
                                              file=file,
                                              country_df=country_df)
         if not foreignCourts.empty:

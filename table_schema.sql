@@ -1,5 +1,5 @@
 CREATE TABLE `citations`(
-`case_id` int(11) NOT NULL AUTO_INCREMENT,
+`id` int(11) NOT NULL,
 `citation_type` int(11) DEFAULT NULL,
 `year` int (11) DEFAULT NULL,
 `source_country_id` int(11) DEFAULT NULL,
@@ -12,5 +12,16 @@ CREATE TABLE `citations`(
 `softlaw_id` int(11) DEFAULT NULL,
 `context` varchar(2000) DEFAULT NULL,
 `source_file_name` varchar(100) DEFAULT NULL,
-PRIMARY KEY (`case_id`)
+PRIMARY KEY (`id`)
+)ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE `case_info`(
+`id` int(11) NOT NULL,
+`decision_date` varchar(2000) DEFAULT NULL,
+`participant_name` varchar(2000) DEFAULT NULL,
+`country_id` int(11) DEFAULT NULL,
+`year` int (11) DEFAULT NULL,
+`context` varchar(2000) DEFAULT NULL,
+`source_file_name` varchar(100) DEFAULT NULL,
+PRIMARY KEY (`id`)
 )ENGINE=MyISAM DEFAULT CHARSET=utf8;

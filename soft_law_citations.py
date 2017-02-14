@@ -51,7 +51,7 @@ def findallSoftLawMatches(text, softlaw_names):
     return results
 
 
-def getSoftLawData(text, regex_df, softlaw_names, file, country_df,
+def getSoftLawData(text, regex_df, softlaw_names, id_num, file, country_df,
                    country_name=None, year=None):
     '''
     Inputs:
@@ -75,6 +75,7 @@ def getSoftLawData(text, regex_df, softlaw_names, file, country_df,
         # Use country id dataframe to assign a source country id based upon the
         # country name from the file structure
         merged_results['source_country_id'] = country_df.loc[country_name][0]
+        merged_results['id'] = id_num
         merged_results = merged_results.rename_axis(None)
         merged_results.drop(['index'], inplace=True, axis=1)
         return merged_results
@@ -83,7 +84,7 @@ def getSoftLawData(text, regex_df, softlaw_names, file, country_df,
 
 
 def insertSoftLawData(country_name, year, file, fileText, regex_df,
-                      softlaw_names, mysql_table, connection_info, country_df):
+                      softlaw_names, id_num, mysql_table, connection_info, country_df):
     '''
     Inputs:
         country_name: name of the source country
@@ -100,6 +101,7 @@ def insertSoftLawData(country_name, year, file, fileText, regex_df,
         softLaws = getSoftLawData(text=fileText, country_name=country_name,
                                   year=year, regex_df=regex_df,
                                   softlaw_names=softlaw_names,
+                                  id_num=id_num,
                                   file=file, country_df=country_df)
         if not softLaws.empty:
             softLaws.to_sql(name=mysql_table, con=connection_info,
