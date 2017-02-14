@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS citations;
 CREATE TABLE `citations`(
 `id` int(11) NOT NULL,
 `citation_type` int(11) DEFAULT NULL,
