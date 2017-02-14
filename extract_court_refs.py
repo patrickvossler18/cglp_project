@@ -937,7 +937,7 @@ def insertCaseRefData(case_info, country_name, country_df, year, id_num, mysql_t
         case_info_list.extend([country_df.loc[country_name][0], year, id_num])
         case_info_df = pd.DataFrame(columns=['case_id', 'decision_date',
                                              'participant_name', 'country_id',
-                                             'year', 'id_num'])
+                                             'year', 'id'])
         case_info_df.loc[0] = case_info_list
         case_info_df.to_sql(name=mysql_table, con=connection_info,
                             index=False, if_exists='append')
