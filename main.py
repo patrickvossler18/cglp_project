@@ -80,6 +80,7 @@ def get_references(REGEX_FOLDER, DATA_FOLDER):
                     ID_VAR += 1
                 except Exception, e:
                     print e
+                    print file
                     pass
 
 

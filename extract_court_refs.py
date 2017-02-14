@@ -1,19 +1,9 @@
 # -*- coding: utf-8 -*-
-import PyPDF2
-import re
-import operator
-import os
-from os import listdir
-from os.path import isfile, join
 from bs4 import BeautifulSoup
 import lxml.html as lh
-import codecs
-import csv
 import pandas as pd
-from tqdm import tqdm
-import itertools
-import sqlalchemy
 from dateutil.parser import parse
+import re
 import translations
 import helpers
 
