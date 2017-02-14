@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS citations;
+DROP TABLE IF EXISTS case_info;
 CREATE TABLE `citations`(
 `id` int(11) NOT NULL,
 `citation_type` int(11) DEFAULT NULL,
@@ -18,6 +19,7 @@ PRIMARY KEY (`id`)
 
 CREATE TABLE `case_info`(
 `id` int(11) NOT NULL,
+`case_id` varchar(2000) DEFAULT NULL,
 `decision_date` varchar(2000) DEFAULT NULL,
 `participant_name` varchar(2000) DEFAULT NULL,
 `country_id` int(11) DEFAULT NULL,
