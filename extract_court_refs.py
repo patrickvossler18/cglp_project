@@ -945,8 +945,8 @@ def insertCaseRefData(case_info, country_name, country_df, year, id_num, mysql_t
         print error
         raise
 
-for year, folder in files.items():
-        for file in folder:
-            extractZimbabweCourtReferences(file)
-for file in folder:
-    extractUnitedStatesCourtReferences(file)
+# for year, folder in files.items():
+#         for file in folder:
+#             extractZimbabweCourtReferences(file)
+# for file in folder:
+#     extractUnitedStatesCourtReferences(file)
