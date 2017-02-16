@@ -15,13 +15,18 @@ caseid
 
 
 def extractAustriaCourtReferences(file_path):
+    CaseId = ''
+    DecisionDate = ''
+    ParticipantName = ''
     try:
         file_content = helpers.getFileText(file_path, html=False)
-        soup = BeautifulSoup(file_content, "html.parser")
-        CaseId = soup.find("p.ErlText.AlignJustify")[2].get_text()
-        DecisionDate = soup.find("p.ErlText.AlignJustify")[1].get_text()
-        ParticipantsName = None
-        return CaseId, DecisionDate, ParticipantsName
+        html_text = lh.fromstring(file_content)
+        caseString = html_text.findall(".//p[@class='ErlText AlignJustify']")
+        if caseString is not None:
+            CaseId = caseString[2].text_content()
+            DecisionDate = caseString[1].text_content()
+        ParticipantName = None
+        return CaseId, DecisionDate, ParticipantName
     except Exception, e:
         print e
         raise
@@ -30,9 +35,11 @@ def extractAustriaCourtReferences(file_path):
 def extractAustraliaCourtReferences(file_path):
     try:
         file_content = helpers.getFileText(file_path, html=False)
-        soup = BeautifulSoup(file_content, "html.parser")
-        elements = soup.find('h2').get_text().split(';')
-        caseAndDate = elements[len(elements)-1]
+        html_text = lh.fromstring(file_content)
+        element = html_text.find(".//h2")
+        if element is not None:
+            elementSplit = element.text_content().split(';')
+        caseAndDate = elementSplit[len(elementSplit)-1]
         index = len(caseAndDate)-1
         while(caseAndDate[index] != '('):
             index = index - 1
@@ -41,8 +48,8 @@ def extractAustraliaCourtReferences(file_path):
             endIndex += 1
         CaseId = caseAndDate[0:index-1].replace('\r\n', '').strip(' ')
         DecisionDate = caseAndDate[index+1:endIndex].replace('\r\n', '').strip(' ')
-        ParticipantsName = elements[0]
-        return CaseId, DecisionDate, ParticipantsName
+        ParticipantName = elementSplit[0].strip()
+        return CaseId, DecisionDate, ParticipantName
     except Exception, e:
         print e
         raise
@@ -887,10 +894,6 @@ def extractSouthAfricaCourtReferences(file_path):
 
 
 countryRefFunctions = {
-    'Zimbabwe': extractZimbabweCourtReferences
-}
-
-countryRefFunctions = {
     'Austria': extractAustriaCourtReferences,
     'Australia': extractAustraliaCourtReferences,
     'Botswana': extractBotswanaCourtReference,
@@ -937,6 +940,6 @@ def insertCaseRefData(case_info, country_name, country_df, year, id, mysql_table
 
 # for year, folder in files.items():
 #         for file in folder:
-#             extractZimbabweCourtReferences(file)
+#             extractBotswanaCourtReference(file)
 # for file in folder:
 #     extractUnitedStatesCourtReferences(file)
