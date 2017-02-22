@@ -29,14 +29,22 @@ def get_references(REGEX_FOLDER, DATA_FOLDER):
             # go through dictionary of files and insert into mysql table
             for file in tqdm(folder):
                 try:
-                    caseInfo = cr.countryRefFunctions[country](file)
-                    cr.insertCaseRefData(case_info=caseInfo,
-                                         country_name=country,
-                                         country_df=country_df,
-                                         year=year,
-                                         id=ID_VAR,
-                                         mysql_table=CASE_TABLE_NAME,
-                                         connection_info=ENGINE)
+                    if country == 'UK':
+                        for function in cr.countryRefFunctions[country]:
+                            case = cr.countryRefFunctions[country](file)
+                            if case is not None:
+                                caseInfo = case
+                                break
+                    else:
+                        caseInfo = cr.countryRefFunctions[country](file)
+                    if caseInfo is not None:
+                        cr.insertCaseRefData(case_info=caseInfo,
+                                             country_name=country,
+                                             country_df=country_df,
+                                             year=year,
+                                             id=ID_VAR,
+                                             mysql_table=CASE_TABLE_NAME,
+                                             connection_info=ENGINE)
                     fileText = helpers.getFileText(file, html=False)
                     sl.insertSoftLawData(country_name=country, year=year,
                                          file=file, fileText=fileText,
@@ -81,6 +89,7 @@ def get_references(REGEX_FOLDER, DATA_FOLDER):
                 except Exception, e:
                     print e
                     print file
+                    ID_VAR += 1
                     pass
 
 
@@ -99,7 +108,7 @@ if __name__ == "__main__":
     COUNTRY_LIST = ['Australia', 'Austria', 'Botswana', 'Canada', 'Chile',
                     'Colombia', 'France', 'Germany', 'Ireland',
                     'Latvia', 'Lesotho', 'Malawi', 'Malaysia', 'New Zealand',
-                    'Nigeria' 'Papua New Guinea', 'Peru',
+                    'Nigeria', 'Papua New Guinea', 'Peru',
                     'Philippines', 'South Africa', 'Switzerland', 'Uganda',
                     'UK', 'USA', 'Zimbabwe']
     CITATION_TABLE_NAME = 'citations'

@@ -882,14 +882,106 @@ def extractZimbabweCourtReferences(file_path):
 
 
 def extractMalaysiaCourtReferences(file_path):
-    pass
+    ParticipantName = ''
+    CaseId = ''
+    DecisionDate = ''
+    try:
+        file_content = helpers.getFileText(file_path, html=False)
+        caseidPatternString = re.compile("(([R][A][Y][U][A][N]\\s[J][E][N][A][Y][A][H])?([R][A][Y][U][A][N]\\s[S][I][V][I][L])?([C][I][V][I][L]\\s[A][P][P][E][L])?([C][R][I][M][I][N][A][L]\\s[A][P][P][E][A][L])?([C][I][V][I][L]\\s[A][P][P][E][A][L])?\\s[N][Oo][.:]\\s[A-Z]?[-]?\\d{1,2}(\\([I][M]\\))?(\\[[A-Z]\\])?[-]\\d{1,4}[-]\\d{2,4}(\\([A-Z]\\))?)")
+        decisionDatePatternString = re.compile("(([D][a][t][e]\\s[o][f]\\s)([D][e][c][i][s][i][o][n])?([J][u][d][g][m][e][n][t])?[:]\\s)")
+        decisionString = decisionDatePatternString.search(file_content)
+        caseIdString = caseidPatternString.search(file_content)
+        if decisionString is not None:
+            DecisionDate = decisionString.group()
+        if caseIdString is not None:
+            CaseId = caseIdString.group()
+        return CaseId, DecisionDate, ParticipantName
+    except Exception, e:
+            print e
+            raise
 
 
 def extractNigeriaCourtReferences(file_path):
-    pass
+    ParticipantName = ''
+    CaseId = ''
+    DecisionDate = ''
+    try:
+        file_content = helpers.getFileText(file_path, html=False)
+        caseidPatternString = re.compile("([A-Z][A-Z]([A-Z]\\d{2,3})?(\\d{2,3})?[/]\\d{2,4})")
+        decisionDatePatternString = re.compile("([1-9]|[12][0-9]|3[01])([t][h]|[r][d]|[s][t]|[n][d])\\s([Dd][Aa][Yy]\\s[o][f])\\s(Jan(uary)?|Feb(ruary)?|Mar(ch)?|Apr(il)?|May|Jun(e)?|Jul(y)?|Aug(ust)?|Sep(tember)?|Oct(ober)?|Nov(ember)?|Dec(ember)?)[- /.]?\\s(1[9][0-9][0-9]|2[0-9][0-9][0-9])")
+        caseIdString = caseidPatternString.search(file_content)
+        if caseIdString is not None:
+            CaseId = caseIdString.group()
+            CaseId = CaseId.replace("/", ":")
+        decisionString = decisionDatePatternString.search(file_content)
+        if decisionString is not None:
+            dateString = decisionString.group()
+            start1 = dateString.find("Day of")
+            if start1 != -1:
+                DecisionDate = dateString[0:start1-3] + " " + dateString[start1 + 7:len(dateString)]
+        return CaseId, DecisionDate, ParticipantName
+    except Exception, e:
+            print e
+            raise
 
 
 def extractSouthAfricaCourtReferences(file_path):
+    '''
+    Incomplete. Original code is spaghetti code
+    '''
+    pass
+    # ParticipantName = ''
+    # CaseId = ''
+    # DecisionDate = ''
+    # try:
+    #     file_content = helpers.getFileText(file_path, html=False)
+    #     caseidPatternString = re.compile("[0-9]+/[0-9]+")
+    #     caseIdString = caseidPatternString.search(file_content)
+    #     if caseIdString is not None:
+    #         CaseId = caseIdString.replace("/", ":")
+    #     searchString = "constitutional court of south africa"
+    #     startIndex = file_content.lower().find(searchString)
+    #     if startIndex != -1:
+    #     return CaseId, DecisionDate, ParticipantName
+    # except Exception, e:
+    #         print e
+    #         raise
+
+
+def extractBelarusCourtReferences(file_path):
+    pass
+
+
+def extractBelgiumCourtReferences(file_path):
+    ParticipantName = ''
+    CaseId = ''
+    DecisionDate = ''
+    try:
+        file_content = helpers.getFileText(file_path, html=False)
+        caseidPatternString = re.compile("([A][r][r][ê][t]\\s[n][°]\\s\\d{1,3}\\/\\d{1,4})")
+        decisionDatePatternString = re.compile("([d][u]\\s\\d{1,2}\\s\\w{1,10}\\b\\s\\d{4})")
+        caseIdString = caseidPatternString.search(file_content)
+        if caseIdString is not None:
+            CaseId = caseIdString.group()
+        decisionString = decisionDatePatternString.search(file_content)
+        if decisionString is not None:
+            dateString = decisionString.group()
+            decisionSplit = dateString.split(" ")
+            day = decisionSplit[1]
+            month = Translator.frenchtoEngMonth.get(decisionSplit[2], '')
+            year = decisionSplit[3]
+            DecisionDate = day + month + year
+         return CaseId, DecisionDate, ParticipantName
+    except Exception, e:
+            print e
+            raise
+
+
+def extractIndiaCourtReferences(file_path):
+    pass
+
+
+def extractLithuaniaCourtReferences(file_path):
     pass
 
 
@@ -915,9 +1007,7 @@ countryRefFunctions = {
     'South Africa': extractSouthAfricaCourtReferences,
     'Switzerland': extractSwitzerlandCourtReferences,
     'Uganda': extractUgandaCourtReferences,
-    'UK': [extractUKSupremeCourtReferences,
-           extractUKHouseofLordsCourtReferences,
-           extractUKPrivyCouncilCourtReferences],
+    'UK': [extractUKSupremeCourtReferences, extractUKHouseofLordsCourtReferences, extractUKPrivyCouncilCourtReferences]
     'USA': extractUnitedStatesCourtReferences,
     'Zimbabwe': extractZimbabweCourtReferences
 }
