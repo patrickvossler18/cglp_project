@@ -971,7 +971,7 @@ def extractBelgiumCourtReferences(file_path):
             month = Translator.frenchtoEngMonth.get(decisionSplit[2], '')
             year = decisionSplit[3]
             DecisionDate = day + month + year
-         return CaseId, DecisionDate, ParticipantName
+        return CaseId, DecisionDate, ParticipantName
     except Exception, e:
             print e
             raise
