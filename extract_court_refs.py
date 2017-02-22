@@ -1007,7 +1007,9 @@ countryRefFunctions = {
     'South Africa': extractSouthAfricaCourtReferences,
     'Switzerland': extractSwitzerlandCourtReferences,
     'Uganda': extractUgandaCourtReferences,
-    'UK': [extractUKSupremeCourtReferences, extractUKHouseofLordsCourtReferences, extractUKPrivyCouncilCourtReferences]
+    'UK': [extractUKSupremeCourtReferences,
+           extractUKHouseofLordsCourtReferences,
+           extractUKPrivyCouncilCourtReferences],
     'USA': extractUnitedStatesCourtReferences,
     'Zimbabwe': extractZimbabweCourtReferences
 }
