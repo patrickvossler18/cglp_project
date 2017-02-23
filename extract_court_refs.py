@@ -58,20 +58,23 @@ def extractAustraliaCourtReferences(file_path):
 def extractBotswanaCourtReference(file_path):
     try:
         file_content = helpers.getFileText(file_path, html=False)
-        soup = BeautifulSoup(file_content, "html.parser")
-        textToBeExtracted = soup.find("title").get_text()
+        # html_text = BeautifulSoup(file_content, "html.parser")
+        html_text = lh.fromstring(file_content)
+        textToBeExtracted = html_text.find(".//title")
+        if textToBeExtracted is not None:
+            text = textToBeExtracted.text_content()
         pattern = re.compile("\\((.*?)\\)")
-        matched_array = pattern.findall(textToBeExtracted)
+        matched_array = pattern.findall(text)
         if len(matched_array) > 0:
-            firstIndex = textToBeExtracted.find(matched_array[len(matched_array) - 2])
+            firstIndex = text.find(matched_array[len(matched_array) - 2])
             if firstIndex == -1:
-                ParticipantName = textToBeExtracted
+                ParticipantName = text
             else:
-                ParticipantName = textToBeExtracted[0:firstIndex-1].strip()
+                ParticipantName = text[0:firstIndex-1].strip()
             DecisionDate = matched_array[len(matched_array) - 1]
             CaseId = matched_array[len(matched_array) - 2]
         else:
-            ParticipantName = textToBeExtracted
+            ParticipantName = text
         return CaseId, DecisionDate, ParticipantName
     except Exception, e:
         print e
