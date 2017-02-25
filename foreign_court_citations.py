@@ -17,7 +17,7 @@ import helpers
 import regex_tables
 
 
-def findallForeignCourtMatches(text, country_names, court_names):
+def findallForeignCourtMatches(text, country_names, court_names, cntry_name):
     '''
     What to do about self references? Keep or skip?
     Goes through each country in regex table and returns the index of the matches as a tuple
@@ -28,28 +28,29 @@ def findallForeignCourtMatches(text, country_names, court_names):
     matches = country_names.query(text)
     for match in matches:
         country_name = match[1]
-        country_string = re.compile(r"(?i)((?:\S+\s+){0,10})\b" + re.escape(country_name)+ r"\b\s*((?:\S+\s+){0,10})", re.IGNORECASE)
-        # use start of match
-        match_location = match[0][0]
-        buffer_area = 500 + len(country_name)
-        lower_bound = (match_location) - buffer_area
-        upper_bound = (match_location) + buffer_area
-        if (match_location - buffer_area) < 0:
-            lower_bound = 0
-        if (match_location + buffer_area) > len(text):
-            upper_bound = len(text)
-        search_area = text[lower_bound:upper_bound]
-        context = country_string.search(search_area)
-        if context:
-            context_string = context.group()
-            find_court = court_names.query(context_string)
-            court_match = None
-            for result in find_court:
-                if result[1][1] != ' ' and result[1][0] == country_name.strip():
-                    court_match = result[1][1]
-            if court_match:
-                match = [country_name, court_match, context_string]
-                results.append(match)
+        if country_name != cntry_name:
+            country_string = re.compile(r"(?i)((?:\S+\s+){0,10})\b" + re.escape(country_name)+ r"\b\s*((?:\S+\s+){0,10})", re.IGNORECASE)
+            # use start of match
+            match_location = match[0][0]
+            buffer_area = 500 + len(country_name)
+            lower_bound = (match_location) - buffer_area
+            upper_bound = (match_location) + buffer_area
+            if (match_location - buffer_area) < 0:
+                lower_bound = 0
+            if (match_location + buffer_area) > len(text):
+                upper_bound = len(text)
+            search_area = text[lower_bound:upper_bound]
+            context = country_string.search(search_area)
+            if context:
+                context_string = context.group()
+                find_court = court_names.query(context_string)
+                court_match = None
+                for result in find_court:
+                    if result[1][1] != ' ' and result[1][0] == country_name.strip():
+                        court_match = result[1][1]
+                if court_match:
+                    match = [country_name, court_match, context_string]
+                    results.append(match)
     results = [list(x) for x in set(tuple(x) for x in results)]
     return results
 
@@ -66,7 +67,7 @@ def getForeignCourtsData(text, regex_df, country_names, court_names, id_num, fil
         country_names: list of lists of search terms and court names
     '''
     # Store matches in list
-    regex_ct_results = findallForeignCourtMatches(text, country_names, court_names)
+    regex_ct_results = findallForeignCourtMatches(text, country_names, court_names, country_name)
     if regex_ct_results:
         # If there are matches, reshape the results into a dataframe, merge with regex_df and clean up for inserting into table
         def extract_key(v):
