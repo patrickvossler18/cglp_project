@@ -105,13 +105,11 @@ if __name__ == "__main__":
         sys.exit("Getopt Error: " + str(error))
 
     # set up default values
-    # COUNTRY_LIST = ['Australia', 'Austria', 'Botswana', 'Canada', 'Chile',
-    #                 'Colombia', 'France', 'Germany', 'Ireland',
-    #                 'Latvia', 'Lesotho', 'Malawi', 'Malaysia', 'New Zealand',
-    #                 'Nigeria', 'Papua New Guinea', 'Peru',
-    #                 'Philippines', 'South Africa', 'Switzerland', 'Uganda',
-    #                 'UK', 'USA', 'Zimbabwe']
-    COUNTRY_LIST = ['Peru', 'Philippines', 'South Africa', 'Switzerland', 'Uganda',
+    COUNTRY_LIST = ['Australia', 'Austria', 'Botswana', 'Canada', 'Chile',
+                    'Colombia', 'France', 'Germany', 'Ireland',
+                    'Latvia', 'Lesotho', 'Malawi', 'Malaysia', 'New Zealand',
+                    'Nigeria', 'Papua New Guinea', 'Peru',
+                    'Philippines', 'South Africa', 'Switzerland', 'Uganda',
                     'UK', 'USA', 'Zimbabwe']
     CITATION_TABLE_NAME = 'citations'
     CASE_TABLE_NAME = 'case_info'
