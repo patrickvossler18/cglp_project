@@ -29,7 +29,10 @@ def get_references(REGEX_FOLDER, DATA_FOLDER):
             # go through dictionary of files and insert into mysql table
             for file in tqdm(folder):
                 try:
+                    if country == 'USA':
+                        country = 'United States'
                     if country == 'UK':
+                        country = 'United Kingdom'
                         for function in cr.countryRefFunctions[country]:
                             case = cr.countryRefFunctions[country](file)
                             if case is not None:
