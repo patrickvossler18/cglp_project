@@ -38,7 +38,7 @@ def getFileText(file_path, html=False):
     output: either raw string or parsed html text content
     '''
     file_extension = os.path.splitext(file_path)[1]
-    if file_extension == ".html" or file_extension == '.htm':
+    if file_extension.lower() == ".html" or file_extension == '.htm':
         file_content = open(file_path).read()
         if html:
             html_text = lh.fromstring(file_content).text_content()
