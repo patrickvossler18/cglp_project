@@ -238,7 +238,7 @@ def extractColombiaCourtReferences(file_path):
                 spanishDate = spanishDate.replace(monthString, '')
                 break
         DecisionDate = day+' '+month+' '+year
-        ParticipantName = None
+        ParticipantName = ''
         return CaseId, DecisionDate, ParticipantName
     except Exception, e:
         print e
@@ -564,9 +564,13 @@ def extractPeruCourtReferences(file_path):
 
 
 def extractPhilippinesCourtReferences(file_path):
+    # Find where index out of range
     ParticipantName = ''
     CaseId = ''
     DecisionDate = ''
+    day = ''
+    month = ''
+    year = ''
     try:
         file_content = helpers.getFileText(file_path, html=False)
         if file_content:
@@ -575,12 +579,21 @@ def extractPhilippinesCourtReferences(file_path):
         participant = html_text.find(".//p[@class='CASETITLE']")
         if caseAndDate is not None:
             caseAndDateText = caseAndDate.text_content()
-            splitString = caseAndDateText.split(" ")
-            CaseId = splitString[0]+splitString[1]+splitString[2]
-            day = splitString[4][0:len(splitString[4])-1]
-            month = splitString[3]
-            year = splitString[5]
-            DecisionDate = day + "-" + month + "-" + year
+            for mon in translations.numberToMonth.values():
+                if mon in caseAndDateText.lower():
+                    month = mon
+                    break
+            yearString = re.compile("\d{4}\]")
+            dayString = re.compile('\d{2}\,')
+            caseIdString = re.compile('\w\.\w.\sNo\..*\.')
+            if yearString.search(caseAndDateText) is not None:
+                year = yearString.search(caseAndDateText).group().replace(']', '')
+            if dayString.search(caseAndDateText) is not None:
+                day = dayString.search(caseAndDateText).group().replace(',', '')
+            if caseIdString.search(caseAndDateText) is not None:
+                CaseId = caseIdString.search(caseAndDateText).group()
+            if day and month and year:
+                DecisionDate = day + "-" + month + "-" + year
         if participant is not None:
             ParticipantName = participant.text_content()
         return CaseId, DecisionDate, ParticipantName
@@ -1033,8 +1046,37 @@ def insertCaseRefData(case_info, country_name, country_df, year, id, mysql_table
         print error
         raise
 
+
+# number_1correct = float(0)
+# number_2correct = float(0)
+# number_3correct = float(0)
+# total_files = float(0)
+# country = 'Colombia'
+# files = helpers.getCountryFiles('/Users/patrick/Dropbox/Fall 2016/SPEC/cglp_data', country)
 # for year, folder in files.items():
-#         for file in folder:
-#             extractBotswanaCourtReference(file)
-# for file in folder:
-#     extractUnitedStatesCourtReferences(file)
+#         for file in tqdm(folder):
+#             try:
+#                 has_info = 0
+#                 ret = extractColombiaCourtReferences(file)
+#                 if len(ret[0]) > 0:
+#                     has_info += 1
+#                 if len(ret[1]) > 0:
+#                     has_info += 1
+#                 if len(ret[2]) > 0:
+#                     has_info += 1
+#                 if has_info == 1:
+#                     number_1correct += 1
+#                 if has_info == 2:
+#                     number_2correct += 1
+#                 if has_info == 3:
+#                     number_3correct += 1
+#                 total_files += 1
+#             except Exception, error:
+#                 print error
+#                 print file
+#                 continue
+
+# pct_1correct = number_1correct/total_files
+# pct_2correct = number_2correct/total_files
+# pct_3correct = number_3correct/total_files
+# print "For %s, %s have 1 field, %s have 2 fields, %s have all 3 fields" % (country, pct_1correct, pct_2correct,pct_3correct)
