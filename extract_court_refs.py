@@ -358,21 +358,22 @@ def extractLatviaCourtReferences(file_path):
     case Id in format No.YYYY-##-####
     participants name: reviewed the case "Case Title here"
     '''
-    try:
-        file_content = helpers.getFileText(file_path, html=False)
-        html_text = unicode(lh.fromstring(file_content).text_content())
-        pass
-        return CaseId, DecisionDate, ParticipantName
-    except Exception, e:
-        print e
-        raise
+    pass
+    # try:
+    #     ParticipantName = ''
+    #     CaseId = ''
+    #     DecisionDate = ''
+    #     file_content = helpers.getFileText(file_path, html=False)
+    #     # html_text = unicode(lh.fromstring(file_content).text_content())
+    #     html_text = BeautifulSoup(file_content, "html.parser")
+    #     pass
+    #     return CaseId, DecisionDate, ParticipantName
+    # except Exception, e:
+    #     print e
+    #     raise
 
 
 def extractLesothoCourtReferences(file_path):
-    '''
-    TO DO: method for getting case id does not work for cases with multiple parens
-    ex. (C OF A (CIV/APN/308/01))
-    '''
     try:
         file_content = helpers.getFileText(file_path, html=False)
         html_text = lh.fromstring(file_content)
@@ -387,9 +388,10 @@ def extractLesothoCourtReferences(file_path):
                 ParticipantName = split_text[0].strip()
                 extractedelements = split_text[len(split_text)-1].split('(')
                 ParticipantName += ' v '+extractedelements[0].strip()
-                case_match = re.search(r'\((.*?)\)', split_text[1])
+                # case_match = re.search(r'\((.*?)\)', split_text[1])
+                case_match = re.search(r'\((.*?)\)\)?(.*\))?', split_text[1])
                 if case_match is not None:
-                    CaseId = case_match.group(1)
+                    CaseId = case_match.group()
                 # CaseId = extractedelements[1].replace(")",'')
         date_text = html_text.find(".//span[@class='date-display-single']")
         if date_text is not None:
@@ -558,7 +560,6 @@ def extractPeruCourtReferences(file_path):
 
 
 def extractPhilippinesCourtReferences(file_path):
-    # Find where index out of range
     ParticipantName = ''
     CaseId = ''
     DecisionDate = ''
@@ -897,8 +898,8 @@ def extractMalaysiaCourtReferences(file_path):
     DecisionDate = ''
     try:
         file_content = helpers.getFileText(file_path, html=False)
-        caseidPatternString = re.compile("(([R][A][Y][U][A][N]\\s[J][E][N][A][Y][A][H])?([R][A][Y][U][A][N]\\s[S][I][V][I][L])?([C][I][V][I][L]\\s[A][P][P][E][L])?([C][R][I][M][I][N][A][L]\\s[A][P][P][E][A][L])?([C][I][V][I][L]\\s[A][P][P][E][A][L])?\\s[N][Oo][.:]\\s[A-Z]?[-]?\\d{1,2}(\\([I][M]\\))?(\\[[A-Z]\\])?[-]\\d{1,4}[-]\\d{2,4}(\\([A-Z]\\))?)")
-        decisionDatePatternString = re.compile("(([D][a][t][e]\\s[o][f]\\s)([D][e][c][i][s][i][o][n])?([J][u][d][g][m][e][n][t])?[:]\\s)")
+        caseidPatternString = re.compile("(([R][A][Y][U][A][N]\s[J][E][N][A][Y][A][H])?([R][A][Y][U][A][N]\s[S][I][V][I][L])?([C][I][V][I][L]\s[A][P][P][E][L])?([C][R][I][M][I][N][A][L]\s[A][P][P][E][A][L])?([C][I][V][I][L]\s[A][P][P][E][A][L])?\s[N][Oo][.:]\s[A-Z]?[-]?\d{1,2}(\([I][M]\))?(\\[[A-Z]\\])?[-]\d{1,4}[-]\d{2,4}(\([A-Z]\))?)")
+        decisionDatePatternString = re.compile("(([D][a][t][e]\s[o][f]\s)([D][e][c][i][s][i][o][n])?([J][u][d][g][m][e][n][t])?[:]\s)")
         decisionString = decisionDatePatternString.search(file_content)
         caseIdString = caseidPatternString.search(file_content)
         if decisionString is not None:
@@ -937,7 +938,7 @@ def extractNigeriaCourtReferences(file_path):
 
 def extractSouthAfricaCourtReferences(file_path):
     '''
-    Incomplete. Original code is spaghetti code
+    Inconsistent for participant name
     '''
     ParticipantName = ''
     CaseId = ''
@@ -1145,6 +1146,6 @@ def insertCaseRefData(case_info, country_name, country_df, year, id, mysql_table
 # pct_3correct = number_3correct/total_files
 # print "For %s, %s have 1 field, %s have 2 fields, %s have all 3 fields" % (country, pct_1correct, pct_2correct,pct_3correct)
 
-for year, folder in files.items():
-    for file in folder:
-        extractIndiaCourtReferences(file)
+# for year, folder in files.items():
+#     for file in folder:
+#         extractPhilippinesCourtReferences(file)
