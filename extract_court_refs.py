@@ -7,12 +7,6 @@ import re
 import translations
 import helpers
 
-'''
-To add:
-Filename column
-caseid
-'''
-
 
 def extractAustriaCourtReferences(file_path):
     CaseId = ''
@@ -945,23 +939,50 @@ def extractSouthAfricaCourtReferences(file_path):
     '''
     Incomplete. Original code is spaghetti code
     '''
-    pass
-    # ParticipantName = ''
-    # CaseId = ''
-    # DecisionDate = ''
-    # try:
-    #     file_content = helpers.getFileText(file_path, html=False)
-    #     caseidPatternString = re.compile("[0-9]+/[0-9]+")
-    #     caseIdString = caseidPatternString.search(file_content)
-    #     if caseIdString is not None:
-    #         CaseId = caseIdString.replace("/", ":")
-    #     searchString = "constitutional court of south africa"
-    #     startIndex = file_content.lower().find(searchString)
-    #     if startIndex != -1:
-    #     return CaseId, DecisionDate, ParticipantName
-    # except Exception, e:
-    #         print e
-    #         raise
+    ParticipantName = ''
+    CaseId = ''
+    DecisionDate = ''
+    try:
+        file_content = helpers.getFileText(file_path, html=False)
+        caseidPatternString = re.compile("[A-Z]{3}\/?\s?[0-9]{1,2}\/[0-9]{2}")
+        caseIdString = caseidPatternString.search(file_content)
+        if caseIdString is not None:
+            CaseId = caseIdString.group()
+            # participantNamePatternString = re.compile("%s.*(v|versus)?(Respondent)" % CaseId)
+            participantNamePatternString = re.compile("(IN THE CONSTITUTIONAL COURT OF SOUTH AFRICA).*(JUDGMENT)")
+            participantNameString = participantNamePatternString.search(file_content)
+            if participantNameString is not None:
+                participantString = participantNameString.group()
+                participantString = participantString.replace("IN THE CONSTITUTIONAL COURT OF SOUTH AFRICA", "")
+                participantString = participantString.replace("CASE NO", "")
+                participantString = participantString.replace("CASE NO :", "")
+                participantString = participantString.replace(CaseId, "")
+                matterString = "In the matter of:"
+                if matterString not in participantString:
+                    matterString = "In the matter of :"
+                if matterString in participantString:
+                    matterStartIdx = participantString.find(matterString)
+                    matterEndIdx = matterStartIdx + len(matterString)
+                    if "Applicantv" in participantString or "Applicantversus" in participantString:
+                        participantString = participantString.replace("Applicant", '')
+                    if "Applicantand" in participantString or "Applicantsand" in participantString:
+                        participantString = participantString.replace("Applicantand", ' versus ')
+                        participantString = participantString.replace("Applicantsand", ' versus ')
+                    respondentIdx = participantString.lower().find("respondent")
+                    ParticipantName = participantString[matterEndIdx:respondentIdx]
+                    ParticipantName = ParticipantName.replace(":", "")
+                    ParticipantName = ParticipantName.strip()
+                deliveredStartIdx = participantString.lower().find('delivered on')
+                deliveredEndIdx = deliveredStartIdx+len('delivered on')
+                judgmentIdx = participantString.lower().find('judgment')
+                DecisionDate = participantString[deliveredEndIdx:judgmentIdx]
+                DecisionDate = DecisionDate.replace("_", "")
+                DecisionDate = DecisionDate.replace(":", "")
+                DecisionDate = DecisionDate.strip()
+        return CaseId, DecisionDate, ParticipantName
+    except Exception, e:
+            print e
+            raise
 
 
 def extractBelarusCourtReferences(file_path):
@@ -974,8 +995,8 @@ def extractBelgiumCourtReferences(file_path):
     DecisionDate = ''
     try:
         file_content = helpers.getFileText(file_path, html=False)
-        caseidPatternString = re.compile("([A][r][r][ê][t]\\s[n][°]\\s\\d{1,3}\\/\\d{1,4})")
-        decisionDatePatternString = re.compile("([d][u]\\s\\d{1,2}\\s\\w{1,10}\\b\\s\\d{4})")
+        caseidPatternString = re.compile("(Arr\xeat\sn\xb0\s\d{1,3}(\/\d{1,4})?)")
+        decisionDatePatternString = re.compile("([d][u]\s\d{1,2}\s\w{1,10}\s\d{4})")
         caseIdString = caseidPatternString.search(file_content)
         if caseIdString is not None:
             CaseId = caseIdString.group()
@@ -984,7 +1005,7 @@ def extractBelgiumCourtReferences(file_path):
             dateString = decisionString.group()
             decisionSplit = dateString.split(" ")
             day = decisionSplit[1]
-            month = Translator.frenchtoEngMonth.get(decisionSplit[2], '')
+            month = translations.frenchtoEngMonth.get(decisionSplit[2], '')
             year = decisionSplit[3]
             DecisionDate = day + month + year
         return CaseId, DecisionDate, ParticipantName
@@ -994,7 +1015,50 @@ def extractBelgiumCourtReferences(file_path):
 
 
 def extractIndiaCourtReferences(file_path):
-    pass
+    ParticipantName = ''
+    CaseId = ''
+    DecisionDate = ''
+    try:
+        file_content = helpers.getFileText(file_path, html=False)
+        if file_content:
+            html_text = lh.fromstring(file_content.decode('utf-8', 'ignore'))
+        documentText = html_text.find(".//textarea")
+        if documentText is not None:
+            extractedText = documentText.text_content()
+            caseIdPatternString = re.compile("(CASE NO\.?\:?)\r?\n?\r?.*")
+            caseIdString = caseIdPatternString.search(extractedText)
+            if caseIdString is not None:
+                CaseId = caseIdString.group().replace('CASE NO.:', '').strip()
+            if len(CaseId) == 0:
+                caseIdPatternString = re.compile("(CITATION\:?)\r?\n?\r?.*")
+                caseIdString = caseIdPatternString.search(extractedText)
+                if caseIdString is not None:
+                    CaseId = caseIdString.group().replace('CITATION', '').strip()
+                    CaseId = CaseId.replace(':', '').strip()
+            petitionerPatternString = re.compile("(PETITIONER\:?)\r?\n?\r?.*")
+            petitionerIdString = petitionerPatternString.search(extractedText)
+            if petitionerIdString is not None:
+                petitionerText = petitionerIdString.group().replace('PETITIONER', '').strip()
+                petitionerText = petitionerText.replace(':', '').strip()
+            respondentPatternString = re.compile("(RESPONDENT\:?)\r?\n?\r?.*")
+            respondentIdString = respondentPatternString.search(extractedText)
+            if respondentIdString is not None:
+                respondentText = respondentIdString.group().replace('RESPONDENT', '').strip()
+                respondentText = respondentText.replace(':', '').strip()
+            if petitionerText and respondentText:
+                ParticipantName = petitionerText + " versus " + respondentText
+            datePatternString = re.compile("(DATE OF JUDGMENT\:?)\r?\n?\r?.*")
+            dateString = datePatternString.search(extractedText)
+            if dateString is not None:
+                DecisionDate = dateString.group().replace('DATE OF JUDGMENT', '').strip()
+                DecisionDate = DecisionDate.replace(':', '').strip()
+        return CaseId, DecisionDate, ParticipantName
+    except Exception, e:
+            print e
+            raise
+
+
+
 
 
 def extractLithuaniaCourtReferences(file_path):
@@ -1080,3 +1144,7 @@ def insertCaseRefData(case_info, country_name, country_df, year, id, mysql_table
 # pct_2correct = number_2correct/total_files
 # pct_3correct = number_3correct/total_files
 # print "For %s, %s have 1 field, %s have 2 fields, %s have all 3 fields" % (country, pct_1correct, pct_2correct,pct_3correct)
+
+for year, folder in files.items():
+    for file in folder:
+        extractIndiaCourtReferences(file)
