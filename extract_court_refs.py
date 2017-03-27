@@ -138,7 +138,7 @@ def extractChileCourtReferences(file_path):
             for key, value in translations.spanishtoEngMonths.items():
                 if key.decode('utf-8') in spanishDate:
                     month = value
-                    monthString = key
+                    monthString = key.decode('utf-8')
                     spanishDate = spanishDate.replace(monthString, '')
                     break
             spanishDate = spanishDate.replace("de", "")
@@ -164,7 +164,6 @@ def extractColombiaCourtReferences(file_path):
     Need to handle edge cases for case id and date
     '''
     try:
-        # caseidString = re.compile("\\bSentencia\\b.*\-\d*\<span", re.IGNORECASE)
         file_content = helpers.getFileText(file_path, html=False)
         # dateString = re.compile("\\bD\.?C\.?,.*\d{4}")
         # dateString = re.compile("\\bD\.\s?C\.?\,.*[\s\S]*?.*\d{4}[,|:|;|\\?|!|)|(]")
@@ -172,34 +171,42 @@ def extractColombiaCourtReferences(file_path):
         spans = html_text.findall('.//span[@lang]')
         spanishDate = ''
         CaseId = ''
+        caseidString = re.compile("\>?\bSentencia\b[\s\S]*?.*\d{1}")
+        dateString1 = re.compile("\bD\.\s?C\.?\,.*[\s\S]*?.*\d{4}[,|:|;|\?|!|)|(]")
+        dateString2 = re.compile("\bBogot\xe1\b[\s\S]*?\d{4}")
         for span in spans:
             text = span.text_content()
-            caseidString = re.compile("\>?\\bSentencia\\b[\s\S]*?.*\d{1}", re.IGNORECASE)
             # caseidString = re.compile("\>?\\bSentencia\\b\sC\-\d+\/\d{2}", re.IGNORECASE)
             caseMatch = caseidString.findall(text)
             if len(caseMatch) > 0:
                 CaseId = caseMatch[0]
                 break
-            dateString = re.compile("\\bD\.\s?C\.?\,.*[\s\S]*?.*\d{4}[,|:|;|\\?|!|)|(]")
-            dateMatch = dateString.findall(text)
-            if len(dateMatch) > 0:
-                spanishDate = dateMatch[0]
+            dateMatch1 = dateString1.findall(text)
+            if len(dateMatch1) > 0:
+                spanishDate = dateMatch1[0]
                 break
-            dateString = re.compile("\\bBogot\\xe1\\b[\s\S]*?\d{4}")
-            dateMatch = dateString.findall(text)
-            if len(dateMatch) > 0:
-                spanishDate = dateMatch[0]
+            dateMatch2 = dateString2.findall(text)
+            if len(dateMatch2) > 0:
+                spanishDate = dateMatch2[0]
                 break
         if len(CaseId) == 0:
             # caseidString = re.compile("\>?\\bSentencia\\b[\s\S]*?\d{3}\/\d{2}", re.IGNORECASE)
-            caseidString = re.compile("\>?\\bSentencia\\b[\s\S]*?.*\d{1}", re.IGNORECASE)
+            caseidString2 = re.compile("\>?\bSentencia\b[\s\S]*?.*\d{1}", re.IGNORECASE)
             # caseidString = re.compile("\\bSentencia\\b[\s\S]*?.*\d{1}",re.IGNORECASE)
-            caseid_matches = caseidString.findall(file_content)
+            caseid_matches = caseidString2.findall(file_content)
             if len(caseid_matches) > 0:
                 CaseId = lh.fromstring(caseid_matches[0]).text_content().encode('utf-8')
                 CaseId = CaseId.replace(">", "")
                 CaseId = CaseId.replace("\r", '')
                 CaseId = CaseId.replace("\n", " ")
+        if len(CaseId) > 30 or len(CaseId) == 0:
+            b_tags = html_text.findall('.//b')
+            caseidString3 = re.compile("\>?Sentencia[\s\S]*?.*\d{1}")
+            for b in b_tags:
+                caseMatch1 = caseidString3.search(b.text_content())
+                if caseMatch1 is not None:
+                    CaseId = caseMatch1.group()
+                    break
         if len(spanishDate) == 0:
             dateString = re.compile("\\bD\.\s?C\.?\,.*[\s\S]*?.*\d{4}[,|:|;|\\?|!|)|(]")
             dateMatch = dateString.findall(file_content)
@@ -218,7 +225,7 @@ def extractColombiaCourtReferences(file_path):
             for key, value in translations.spanishtoEngNum.items():
                 if key.decode('utf-8') in spanishDate:
                     day = value
-                    dayString = key
+                    dayString = key.decode('utf-8')
                     spanishDate = spanishDate.replace(dayString, '')
         spanishDate = spanishDate.replace(",", "")
         spanishDate = spanishDate.replace(")", "")
@@ -228,7 +235,7 @@ def extractColombiaCourtReferences(file_path):
         for key, value in translations.spanishtoEngMonths.items():
             if key.decode('utf-8') in spanishDate:
                 month = value
-                monthString = key
+                monthString = key.decode('utf-8')
                 spanishDate = spanishDate.replace(monthString, '')
                 break
         DecisionDate = day+' '+month+' '+year
@@ -1112,40 +1119,10 @@ def insertCaseRefData(case_info, country_name, country_df, year, id, mysql_table
         raise
 
 
-# number_1correct = float(0)
-# number_2correct = float(0)
-# number_3correct = float(0)
-# total_files = float(0)
-# country = 'Colombia'
-# files = helpers.getCountryFiles('/Users/patrick/Dropbox/Fall 2016/SPEC/cglp_data', country)
-# for year, folder in files.items():
-#         for file in tqdm(folder):
-#             try:
-#                 has_info = 0
-#                 ret = extractColombiaCourtReferences(file)
-#                 if len(ret[0]) > 0:
-#                     has_info += 1
-#                 if len(ret[1]) > 0:
-#                     has_info += 1
-#                 if len(ret[2]) > 0:
-#                     has_info += 1
-#                 if has_info == 1:
-#                     number_1correct += 1
-#                 if has_info == 2:
-#                     number_2correct += 1
-#                 if has_info == 3:
-#                     number_3correct += 1
-#                 total_files += 1
-#             except Exception, error:
-#                 print error
-#                 print file
-#                 continue
+error = True
 
-# pct_1correct = number_1correct/total_files
-# pct_2correct = number_2correct/total_files
-# pct_3correct = number_3correct/total_files
-# print "For %s, %s have 1 field, %s have 2 fields, %s have all 3 fields" % (country, pct_1correct, pct_2correct,pct_3correct)
-
-# for year, folder in files.items():
-#     for file in folder:
-#         extractPhilippinesCourtReferences(file)
+for year, folder in files.items():
+    for file in folder:
+        if len(extractColombiaCourtReferences(file)[0]) > 30:
+            print file
+            break
