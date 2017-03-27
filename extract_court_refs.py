@@ -171,7 +171,7 @@ def extractColombiaCourtReferences(file_path):
         spans = html_text.findall('.//span[@lang]')
         spanishDate = ''
         CaseId = ''
-        caseidString = re.compile("\>?\bSentencia\b[\s\S]*?.*\d{1}")
+        caseidString = re.compile("\>?\bSentencia\b[\s\S]*?.*\d{1}", re.IGNORECASE)
         dateString1 = re.compile("\bD\.\s?C\.?\,.*[\s\S]*?.*\d{4}[,|:|;|\?|!|)|(]")
         dateString2 = re.compile("\bBogot\xe1\b[\s\S]*?\d{4}")
         for span in spans:
@@ -201,7 +201,7 @@ def extractColombiaCourtReferences(file_path):
                 CaseId = CaseId.replace("\n", " ")
         if len(CaseId) > 30 or len(CaseId) == 0:
             b_tags = html_text.findall('.//b')
-            caseidString3 = re.compile("\>?Sentencia[\s\S]*?.*\d{1}")
+            caseidString3 = re.compile("\>?Sentencia[\s\S]*?.*\d{1}", re.IGNORECASE)
             for b in b_tags:
                 caseMatch1 = caseidString3.search(b.text_content())
                 if caseMatch1 is not None:
@@ -212,7 +212,7 @@ def extractColombiaCourtReferences(file_path):
             dateMatch = dateString.findall(file_content)
             if len(dateMatch) > 0:
                 spanishDate = lh.fromstring(dateMatch[0]).text_content()
-            dateString = re.compile("\\bBogot.*\\b[\s\S]*?\d{4}")
+            dateString = re.compile("\\bBogot.*\\b[\s\S]*?\d{4}", re.IGNORECASE)
             dateMatch = dateString.findall(file_content)
             if len(dateMatch) > 0:
                 spanishDate = lh.fromstring(dateMatch[0]).text_content()
