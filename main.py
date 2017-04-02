@@ -8,9 +8,17 @@ import foreign_court_citations as fc
 import extract_court_refs as cr
 from tqdm import tqdm
 import getopt
+import logging
+from time import gmtime, strftime
 
 
 def get_references(REGEX_FOLDER, DATA_FOLDER):
+    # Initialize logger
+    start_time = strftime("%d-%m-%Y", gmtime())
+    logging.basicConfig(filename='/tmp/get_references_%s.log' % start_time, level=logging.DEBUG,
+                        format='%(asctime)s %(levelname)s %(name)s %(message)s')
+    logger = logging.getLogger(__name__)
+
     # create regex tables just once
     softlaw_names, soft_law_regex_df = rt.createSoftLawRegexDf(folder_path=REGEX_FOLDER, file_name='softlaw_regex_20161003.csv')
     intl_court_names, intl_court_regex_df = rt.createIntlCourtsRegexDf(folder_path=REGEX_FOLDER, file_name='intl_courts_regex_20161003.csv')
@@ -90,8 +98,7 @@ def get_references(REGEX_FOLDER, DATA_FOLDER):
                                                country_df=country_df)
                     ID_VAR += 1
                 except Exception, e:
-                    print e
-                    print file
+                    logger.error(e)
                     ID_VAR += 1
                     pass
 

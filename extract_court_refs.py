@@ -169,26 +169,42 @@ def extractColombiaCourtReferences(file_path):
         # dateString = re.compile("\\bD\.\s?C\.?\,.*[\s\S]*?.*\d{4}[,|:|;|\\?|!|)|(]")
         html_text = lh.fromstring(file_content)
         spans = html_text.findall('.//span[@lang]')
+        if len(spans) == 0:
+            spans = html_text.findall('.//span')
         spanishDate = ''
         CaseId = ''
         caseidString = re.compile("\>?\bSentencia\b[\s\S]*?.*\d{1}", re.IGNORECASE)
         dateString1 = re.compile("\bD\.\s?C\.?\,.*[\s\S]*?.*\d{4}[,|:|;|\?|!|)|(]")
         dateString2 = re.compile("\bBogot\xe1\b[\s\S]*?\d{4}")
+        dateString2 = re.compile("\bBogot\xe1\b[\s\S]*?\d{4}")
+        dateString3 = re.compile("\((\w+\s)?\d{1,2}.*\r?\n?\d{4}\W?\)")
         for span in spans:
             text = span.text_content()
             # caseidString = re.compile("\>?\\bSentencia\\b\sC\-\d+\/\d{2}", re.IGNORECASE)
-            caseMatch = caseidString.findall(text)
-            if len(caseMatch) > 0:
-                CaseId = caseMatch[0]
+            caseMatch = caseidString.search(text)
+            if caseMatch is not None and len(CaseId) == 0:
+                CaseId = caseMatch.group()
                 break
-            dateMatch1 = dateString1.findall(text)
-            if len(dateMatch1) > 0:
-                spanishDate = dateMatch1[0]
+        for span in spans:
+            text = span.text_content()
+            dateMatch1 = dateString1.search(text)
+            if dateMatch1 is not None:
+                spanishDate = dateMatch1.group()
                 break
-            dateMatch2 = dateString2.findall(text)
-            if len(dateMatch2) > 0:
-                spanishDate = dateMatch2[0]
-                break
+        if len(spanishDate) == 0:
+            for span in spans:
+                text = span.text_content()
+                dateMatch2 = dateString2.search(text)
+                if dateMatch2 is not None :
+                    spanishDate = dateMatch2.group()
+                    break
+        if len(spanishDate) == 0:
+            for span in spans:
+                text = span.text_content()
+                dateMatch3 = dateString3.search(text)
+                if dateMatch3 is not None:
+                    spanishDate = dateMatch3.group()
+                    break
         if len(CaseId) == 0:
             # caseidString = re.compile("\>?\\bSentencia\\b[\s\S]*?\d{3}\/\d{2}", re.IGNORECASE)
             caseidString2 = re.compile("\>?\bSentencia\b[\s\S]*?.*\d{1}", re.IGNORECASE)
@@ -207,6 +223,11 @@ def extractColombiaCourtReferences(file_path):
                 if caseMatch1 is not None:
                     CaseId = caseMatch1.group()
                     break
+            if len(CaseId) > 30:
+                bodytext = html_text.find('.//body').text_content()
+                caseMatch2 = caseidString3.search(bodytext)
+                if caseMatch2 is not None:
+                    CaseId = caseMatch2.group()
         if len(spanishDate) == 0:
             dateString = re.compile("\\bD\.\s?C\.?\,.*[\s\S]*?.*\d{4}[,|:|;|\\?|!|)|(]")
             dateMatch = dateString.findall(file_content)
@@ -956,7 +977,17 @@ def extractSouthAfricaCourtReferences(file_path):
         caseIdString = caseidPatternString.search(file_content)
         if caseIdString is not None:
             CaseId = caseIdString.group()
-            # participantNamePatternString = re.compile("%s.*(v|versus)?(Respondent)" % CaseId)
+            CaseIdIdx = file_content.find(CaseId)
+            heardOnIdx = file_content.lower().find('heard on')
+            if CaseIdIdx != -1 and heardOnIdx != -1:
+                participantString = file_content[CaseIdIdx+len(CaseId):heardOnIdx].replace('\n', '').strip()
+                participantString = ' '.join(participantString.split())
+                ParticipantName = participantString
+            decidedOnIdx = file_content.lower().find('decided on')
+            judgmentIdx = file_content.find('JUDGMENT')
+            if decidedOnIdx != -1 and judgmentIdx != -1:
+                DecisionDate = file_content[decidedOnIdx+len('decided on'):judgmentIdx].strip().replace(':', '')
+        if len(ParticipantName) == 0 and len(decisionDate) == 0:
             participantNamePatternString = re.compile("(IN THE CONSTITUTIONAL COURT OF SOUTH AFRICA).*(JUDGMENT)")
             participantNameString = participantNamePatternString.search(file_content)
             if participantNameString is not None:
