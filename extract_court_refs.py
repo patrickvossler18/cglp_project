@@ -78,7 +78,7 @@ def extractBotswanaCourtReference(file_path):
 def extractCanadaCourtReference(file_path):
     try:
         file_content = helpers.getFileText(file_path, html=False)
-        soup = BeautifulSoup(file_content, "html.parser")
+        soup = BeautifulSoup(file_content.decode('utf-8','ignore'), "html.parser")
         metadata = soup.find("div", {"class": "metadata"})
         tablerows = metadata.findAll('tr')
         court_data = []
@@ -378,27 +378,6 @@ def extractIrelandCourtReferences(file_path):
     except Exception, e:
         print e
         raise
-
-
-def extractLatviaCourtReferences(file_path):
-    '''
-    use datefinder for getting date of decision
-    case Id in format No.YYYY-##-####
-    participants name: reviewed the case "Case Title here"
-    '''
-    pass
-    # try:
-    #     ParticipantName = ''
-    #     CaseId = ''
-    #     DecisionDate = ''
-    #     file_content = helpers.getFileText(file_path, html=False)
-    #     # html_text = unicode(lh.fromstring(file_content).text_content())
-    #     html_text = BeautifulSoup(file_content, "html.parser")
-    #     pass
-    #     return CaseId, DecisionDate, ParticipantName
-    # except Exception, e:
-    #     print e
-    #     raise
 
 
 def extractLesothoCourtReferences(file_path):
@@ -1024,10 +1003,6 @@ def extractSouthAfricaCourtReferences(file_path):
             raise
 
 
-def extractBelarusCourtReferences(file_path):
-    pass
-
-
 def extractBelgiumCourtReferences(file_path):
     ParticipantName = ''
     CaseId = ''
@@ -1097,24 +1072,49 @@ def extractIndiaCourtReferences(file_path):
             raise
 
 
-
+def extractBelarusCourtReferences(file_path):
+    pass
 
 
 def extractLithuaniaCourtReferences(file_path):
     pass
 
 
+def extractLatviaCourtReferences(file_path):
+    '''
+    use datefinder for getting date of decision
+    case Id in format No.YYYY-##-####
+    participants name: reviewed the case "Case Title here"
+    '''
+    pass
+    # try:
+    #     ParticipantName = ''
+    #     CaseId = ''
+    #     DecisionDate = ''
+    #     file_content = helpers.getFileText(file_path, html=False)
+    #     # html_text = unicode(lh.fromstring(file_content).text_content())
+    #     html_text = BeautifulSoup(file_content, "html.parser")
+    #     pass
+    #     return CaseId, DecisionDate, ParticipantName
+    # except Exception, e:
+    #     print e
+    #     raise
+
+
 countryRefFunctions = {
     'Austria': extractAustriaCourtReferences,
     'Australia': extractAustraliaCourtReferences,
     'Botswana': extractBotswanaCourtReference,
+    'Belgium': extractBelgiumCourtReferences,
     'Canada': extractCanadaCourtReference,
     'Chile': extractChileCourtReferences,
     'Colombia': extractColombiaCourtReferences,
     'France': extractFranceCourtReferences,
     'Germany': extractGermanyCourtReferences,
+    'India': extractIndiaCourtReferences,
     'Ireland': extractIrelandCourtReferences,
-    'Latvia': extractLatviaCourtReferences,
+    # 'Latvia': extractLatviaCourtReferences,
+    # 'Lithuania': extractLithuaniaCourtReferences,
     'Lesotho': extractLesothoCourtReferences,
     'Malawi': extractMalawiCourtReferences,
     'Malaysia': extractMalaysiaCourtReferences,
@@ -1134,8 +1134,8 @@ countryRefFunctions = {
 }
 
 
-def insertCaseRefData(case_info, country_name, country_df, year, id, mysql_table,
-                      connection_info):
+def insertCaseRefData(case_info, country_name, country_df, year, id,
+                      mysql_table, connection_info):
     try:
         case_info_list = list(case_info)
         case_info_list.extend([country_df.loc[country_name][0], year, id])

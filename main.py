@@ -99,6 +99,7 @@ def get_references(REGEX_FOLDER, DATA_FOLDER):
                     ID_VAR += 1
                 except Exception, e:
                     logger.error(e)
+                    logger.info(file)
                     ID_VAR += 1
                     pass
 
