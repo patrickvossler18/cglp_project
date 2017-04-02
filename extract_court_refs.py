@@ -987,7 +987,7 @@ def extractSouthAfricaCourtReferences(file_path):
             judgmentIdx = file_content.find('JUDGMENT')
             if decidedOnIdx != -1 and judgmentIdx != -1:
                 DecisionDate = file_content[decidedOnIdx+len('decided on'):judgmentIdx].strip().replace(':', '')
-        if len(ParticipantName) == 0 and len(decisionDate) == 0:
+        if len(ParticipantName) == 0 and len(DecisionDate) == 0:
             participantNamePatternString = re.compile("(IN THE CONSTITUTIONAL COURT OF SOUTH AFRICA).*(JUDGMENT)")
             participantNameString = participantNamePatternString.search(file_content)
             if participantNameString is not None:
@@ -1150,10 +1150,10 @@ def insertCaseRefData(case_info, country_name, country_df, year, id, mysql_table
         raise
 
 
-error = True
+# error = True
 
-for year, folder in files.items():
-    for file in folder:
-        if len(extractColombiaCourtReferences(file)[0]) > 30:
-            print file
-            break
+# for year, folder in files.items():
+#     for file in folder:
+#         if len(extractColombiaCourtReferences(file)[0]) > 30:
+#             print file
+#             break
