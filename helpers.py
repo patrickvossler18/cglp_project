@@ -57,7 +57,7 @@ def getFileText(file_path, html=False):
         if len(page_text) <= num_pages:
             return None
         else:
-            return page_text
+            return page_text.encode('utf-8')
     if file_extension == ".rtf":
         doc = Rtf15Reader.read(open(file_path))
         page_text = PlaintextWriter.write(doc).getvalue()
