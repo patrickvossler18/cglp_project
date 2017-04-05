@@ -16,7 +16,8 @@ def get_references(REGEX_FOLDER, DATA_FOLDER):
     # Initialize logger
     start_time = strftime("%d-%m-%Y", gmtime())
     logging.basicConfig(filename='/tmp/get_references_%s.log' % start_time, level=logging.DEBUG,
-                        format='%(asctime)s %(levelname)s %(name)s %(message)s')
+                        format='%(asctime)s %(message)s')
+                        # format='%(asctime)s %(levelname)s %(name)s %(message)s')
     logger = logging.getLogger(__name__)
 
     # create regex tables just once
@@ -98,8 +99,7 @@ def get_references(REGEX_FOLDER, DATA_FOLDER):
                                                country_df=country_df)
                     ID_VAR += 1
                 except Exception, e:
-                    logger.error(e)
-                    logger.info(file)
+                    logger.error('%s, %s, %s' % (country, file, e))
                     ID_VAR += 1
                     pass
 
