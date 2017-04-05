@@ -32,7 +32,7 @@ def unicode_csv_reader(utf8_data, dialect=csv.excel, **kwargs):
         yield [unicode(cell, 'utf-8') for cell in row]
 
 
-def getFileText(file_path, html=False):
+def getFileText(file_path, html=False, utf8=False):
     '''
     input: string of file path
     output: either raw string or parsed html text content
@@ -57,7 +57,10 @@ def getFileText(file_path, html=False):
         if len(page_text) <= num_pages:
             return None
         else:
-            return page_text.encode('utf-8')
+            if utf8:
+                return page_text.encode('utf-8')
+            else:
+                return page_text
     if file_extension == ".rtf":
         doc = Rtf15Reader.read(open(file_path))
         page_text = PlaintextWriter.write(doc).getvalue()
