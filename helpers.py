@@ -20,7 +20,7 @@ import helpers
 
 
 def connectDb(db_name, db_password):
-    engine = create_engine("mysql+mysqldb://root:%s@localhost/%s" % (db_password, db_name))
+    engine = create_engine("mysql+mysqldb://root:%s@localhost/%s?charset=utf8" % (db_password, db_name))
     return engine
 
 
