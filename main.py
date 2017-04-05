@@ -16,7 +16,7 @@ def get_references(REGEX_FOLDER, DATA_FOLDER):
     # Initialize logger
     start_time = strftime("%d-%m-%Y", gmtime())
     logging.basicConfig(filename='/tmp/get_references_%s.log' % start_time, level=logging.DEBUG,
-                        format='%(asctime)s %(funcName)20s() %(message)s')
+                        format='[%(asctime)s %(filename)s:%(lineno)s - %(funcName)20s()] %(message)s')
                         # format='%(asctime)s %(levelname)s %(name)s %(message)s')
     logger = logging.getLogger(__name__)
 
