@@ -1150,10 +1150,13 @@ def insertCaseRefData(case_info, country_name, country_df, year, id,
         raise
 
 
-# error = True
-
+# # error = True
+# files = helpers.getCountryFiles('/home/ec2-user/CGLP_Data','Canada')
 # for year, folder in files.items():
 #     for file in folder:
-#         if len(extractColombiaCourtReferences(file)[0]) > 30:
+#         try:
+#             ret = extractCanadaCourtReference(file)
+#         except Exception, e:
+#             print e
 #             print file
-#             break
+#             raise
