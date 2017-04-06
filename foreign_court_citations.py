@@ -26,6 +26,7 @@ def findallForeignCourtMatches(text, country_names, court_names, cntry_name):
     '''
     results = []
     matches = country_names.query(text)
+    print len(matches)
     for match in matches:
         country_name = match[1]
         # Remove this condition
