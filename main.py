@@ -38,8 +38,7 @@ def get_references(REGEX_FOLDER, DATA_FOLDER):
         countryFiles = helpers.getCountryFiles(DATA_FOLDER, country)
         for year, folder in countryFiles.items():
             # go through dictionary of files and insert into mysql table
-            # for file in tqdm(folder):
-            for file in folder:
+            for file in tqdm(folder):
                 try:
                     if country == 'USA':
                         country = 'United States'
