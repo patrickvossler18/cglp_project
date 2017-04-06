@@ -110,6 +110,6 @@ def findAllInstances(text, term):
 
 def timed(f):
     start = time.time()
-    ret = f()
+    ret = f
     elapsed = time.time() - start
     return ret, elapsed
