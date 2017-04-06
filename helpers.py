@@ -17,6 +17,7 @@ import esm
 from pyth.plugins.rtf15.reader import Rtf15Reader
 from pyth.plugins.plaintext.writer import PlaintextWriter
 import helpers
+import time
 
 
 def connectDb(db_name, db_password):
@@ -105,3 +106,10 @@ def findAllInstances(text, term):
             yield index
     except ValueError:
         pass
+
+
+def timed(f):
+    start = time.time()
+    ret = f()
+    elapsed = time.time() - start
+    return ret, elapsed
