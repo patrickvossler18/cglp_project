@@ -1,20 +1,7 @@
-import PyPDF2
-import re
-import operator
 import os
-from os import listdir
-from os.path import isfile, join
-from bs4 import BeautifulSoup
-import lxml.html as lh
-import codecs
-import csv
 import pandas as pd
-from tqdm import tqdm
 import itertools
-from sqlalchemy import create_engine
-import esm
-import helpers
-import regex_tables
+import re
 
 
 def findallForeignCourtMatches(text, country_names, court_names, cntry_name):
@@ -26,7 +13,6 @@ def findallForeignCourtMatches(text, country_names, court_names, cntry_name):
     '''
     results = []
     matches = country_names.query(text)
-    print len(matches)
     for match in matches:
         country_name = match[1]
         # Remove this condition
@@ -125,15 +111,3 @@ def insertForeignCourtsData(country_name, year, file, fileText, regex_df,
     except Exception, error:
         print error
         raise
-
-
-# #create foreign courts regex tables
-# regex_table,regex_df = regex_tables.createForeignCourtsDf(folder_path="/Users/patrick/Dropbox/Fall 2016/SPEC/Regex tables/",file_name='foreign_courts_regex_20161007.csv')
-# #connect to mysql server
-# table_name = 'citations'
-# password = ''
-# engine = helpers.connectDb(table_name,password)
-# #create dictionary of file paths
-# countryFiles = helpers.getCountryFiles("/Users/patrick/Dropbox/Fall 2016/SPEC/CGLP Data","Colombia")
-# #go through dictionary of files and insert into mysql table
-# insertForeignCourtsData("Australia",countryFiles,regex_df,regex_table,table_name,engine)

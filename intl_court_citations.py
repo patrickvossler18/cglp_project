@@ -55,9 +55,6 @@ def getIntlCourtData(text, regex_df, intl_court_names, id_num, file, country_df,
         merged_results = merged_results.rename(columns={'matches': 'context'})
         merged_results['year'] = year
         merged_results['source_file_name'] = os.path.basename(file)
-        # ##UNTESTED####
-        # Use country id dataframe to assign a source country id based upon the
-        # country name from the file structure
         merged_results['source_country_id'] = country_df.loc[country_name][0]
         merged_results['id'] = id_num
         merged_results = merged_results.rename_axis(None)
@@ -94,14 +91,3 @@ def insertIntlCourtData(country_name, year, file, fileText, regex_df,
     except Exception, error:
         print error
         raise
-
-# #create regex tables
-# regex_table,regex_df = createIntlCourtsRegexDf(folder_path="/Users/patrick/Dropbox/Fall 2016/SPEC/Regex tables/",file_name= 'intl_courts_regex_20161003.csv')
-# #connect to mysql server
-# table_name = 'citations'
-# password = ''
-# engine = helpers.connectDb(table_name,password)
-# #create dictionary of file paths
-# countryFiles = helpers.getCountryFiles("/Users/patrick/Dropbox/Fall 2016/SPEC/CGLP Data","Australia")
-# #go through dictionary of files and insert into mysql table
-# insertIntlCourtData("Australia",countryFiles,regex_df,regex_table,table_name,engine)

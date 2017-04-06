@@ -1,20 +1,6 @@
-import PyPDF2
 import re
-import operator
 import os
-from os import listdir
-from os.path import isfile, join
-from bs4 import BeautifulSoup
-import lxml.html as lh
-import codecs
-import csv
 import pandas as pd
-from tqdm import tqdm
-import itertools
-import esm
-from sqlalchemy import create_engine
-import helpers
-import regex_tables
 
 
 def findallTreatyMatches(text, treaty_names):
@@ -103,14 +89,3 @@ def insertTreatyData(country_name, year, file, fileText, regex_df,
     except Exception, error:
         print error
         raise
-
-# #create regex tables
-# treaty_names,regex_df = createTreatiesRegexDf(folder_path="/Users/patrick/Dropbox/Fall 2016/SPEC/Regex tables/",file_name= 'treaties_regex_20161003.csv')
-# #connect to mysql server
-# table_name = 'citations'
-# password = ''
-# engine = helpers.connectDb(table_name,password)
-# #create dictionary of file paths
-# countryFiles = helpers.getCountryFiles("/Users/patrick/Dropbox/Fall 2016/SPEC/CGLP Data","Australia")
-# #go through dictionary of files and insert into mysql table
-# insertTreatyData("Australia",countryFiles,regex_df,treaty_names,table_name,engine)
