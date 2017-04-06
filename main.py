@@ -8,17 +8,18 @@ import foreign_court_citations as fc
 import extract_court_refs as cr
 from tqdm import tqdm
 import getopt
-import logging
+# import logging
 from time import gmtime, strftime
+import csv
 
 
 def get_references(REGEX_FOLDER, DATA_FOLDER):
     # Initialize logger
-    start_time = strftime("%d-%m-%Y", gmtime())
-    logging.basicConfig(filename='/tmp/get_references_%s.log' % start_time, level=logging.DEBUG,
-                        format='[%(asctime)s %(filename)s:%(lineno)s - %(funcName)20s()] %(message)s')
-                        # format='%(asctime)s %(levelname)s %(name)s %(message)s')
-    logger = logging.getLogger(__name__)
+    # start_time = strftime("%d-%m-%Y", gmtime())
+    # logging.basicConfig(filename='/tmp/get_references_%s.log' % start_time, level=logging.DEBUG,
+    #                     format='[%(asctime)s %(filename)s:%(lineno)s - %(funcName)20s()] %(message)s')
+    #                     # format='%(asctime)s %(levelname)s %(name)s %(message)s')
+    # logger = logging.getLogger(__name__)
 
     # create regex tables just once
     softlaw_names, soft_law_regex_df = rt.createSoftLawRegexDf(folder_path=REGEX_FOLDER, file_name='softlaw_regex_20161003.csv')
@@ -30,6 +31,7 @@ def get_references(REGEX_FOLDER, DATA_FOLDER):
     # connect to mysql server
     ENGINE = helpers.connectDb(DATABASE_NAME, PASSWORD)
     ID_VAR = 1
+    error_log = []
 
     for country in COUNTRY_LIST:
         print country
@@ -100,9 +102,14 @@ def get_references(REGEX_FOLDER, DATA_FOLDER):
                                                country_df=country_df)
                     ID_VAR += 1
                 except Exception, e:
-                    logger.error('%s, %s, %s' % (country, file, e))
+                    error_log.append('%s, %s, %s' % (country, file, e))
+                    # logger.error('%s, %s, %s' % (country, file, e))
                     ID_VAR += 1
                     pass
+    start_time = strftime("%d-%m-%Y", gmtime())
+    with open('error_log_%s.csv' % (start_time), 'wb') as csvfile:
+        wr = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
+        wr.writerow(error_log)
 
 
 if __name__ == "__main__":
