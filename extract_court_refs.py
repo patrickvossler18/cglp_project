@@ -78,7 +78,7 @@ def extractBotswanaCourtReference(file_path):
 def extractCanadaCourtReference(file_path):
     try:
         file_content = helpers.getFileText(file_path, html=False)
-        soup = BeautifulSoup(file_content.decode('utf-8','ignore'), "html.parser")
+        soup = BeautifulSoup(file_content.decode('utf-8', 'ignore'), "html.parser")
         metadata = soup.find("div", {"class": "metadata"})
         tablerows = metadata.findAll('tr')
         court_data = []
@@ -1151,11 +1151,11 @@ def insertCaseRefData(case_info, country_name, country_df, year, id,
 
 
 # # error = True
-# files = helpers.getCountryFiles('/home/ec2-user/CGLP_Data','Canada')
+# files = helpers.getCountryFiles('/home/ec2-user/CGLP_Data', 'Australia')
 # for year, folder in files.items():
 #     for file in folder:
 #         try:
-#             ret = extractCanadaCourtReference(file)
+#             ret = extractBelgiumCourtReferences(file)
 #         except Exception, e:
 #             print e
 #             print file
