@@ -18,10 +18,11 @@ from pyth.plugins.rtf15.reader import Rtf15Reader
 from pyth.plugins.plaintext.writer import PlaintextWriter
 import helpers
 import time
+import cchardet
 
 
 def connectDb(db_name, db_password):
-    engine = create_engine("mysql+mysqldb://root:%s@localhost/%s?charset=utf8" % (db_password, db_name))
+    engine = create_engine("mysql+mysqldb://root:%s@localhost/%s?charset=utf8" % (db_password, db_name), encoding='utf-8')
     return engine
 
 
@@ -33,7 +34,7 @@ def unicode_csv_reader(utf8_data, dialect=csv.excel, **kwargs):
         yield [unicode(cell, 'utf-8') for cell in row]
 
 
-def getFileText(file_path, html=False, utf8=False):
+def getFileText(file_path, html=False, pdf_utf8=False):
     '''
     input: string of file path
     output: either raw string or parsed html text content
@@ -113,3 +114,10 @@ def timed(f):
     ret = f
     elapsed = time.time() - start
     return ret, elapsed
+
+
+def convert_encoding(data, new_coding='UTF-8'):
+    encoding = cchardet.detect(data)['encoding']
+    if new_coding.upper() != encoding.upper():
+        data = data.decode(encoding, data).encode(new_coding)
+    return data

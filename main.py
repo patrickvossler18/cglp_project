@@ -60,16 +60,16 @@ def get_references(REGEX_FOLDER, DATA_FOLDER):
                                              mysql_table=CASE_TABLE_NAME,
                                              connection_info=ENGINE)
                     # Fix for pdfs because esm only accepting strings, not unicode
-                    fileText = helpers.getFileText(file, html=False, utf8=True)
-                    helpers.time(sl.insertSoftLawData(country_name=country, year=year,
-                                                      file=file, fileText=fileText,
-                                                      regex_df=soft_law_regex_df,
-                                                      softlaw_names=softlaw_names,
-                                                      id_num=ID_VAR,
-                                                      mysql_table=CITATION_TABLE_NAME,
-                                                      connection_info=ENGINE,
-                                                      country_df=country_df))
-                    helpers.time(ic.insertIntlCourtData(country_name=country,
+                    fileText = helpers.getFileText(file, html=False, pdf_utf8=True)
+                    sl.insertSoftLawData(country_name=country, year=year,
+                                         file=file, fileText=fileText,
+                                         regex_df=soft_law_regex_df,
+                                         softlaw_names=softlaw_names,
+                                         id_num=ID_VAR,
+                                         mysql_table=CITATION_TABLE_NAME,
+                                         connection_info=ENGINE,
+                                         country_df=country_df)
+                    ic.insertIntlCourtData(country_name=country,
                                            year=year,
                                            file=file,
                                            fileText=fileText,
@@ -78,8 +78,8 @@ def get_references(REGEX_FOLDER, DATA_FOLDER):
                                            id_num=ID_VAR,
                                            mysql_table=CITATION_TABLE_NAME,
                                            connection_info=ENGINE,
-                                           country_df=country_df))
-                    helpers.time(tc.insertTreatyData(country_name=country,
+                                           country_df=country_df)
+                    tc.insertTreatyData(country_name=country,
                                         year=year,
                                         file=file,
                                         fileText=fileText,
@@ -88,8 +88,8 @@ def get_references(REGEX_FOLDER, DATA_FOLDER):
                                         id_num=ID_VAR,
                                         mysql_table=CITATION_TABLE_NAME,
                                         connection_info=ENGINE,
-                                        country_df=country_df))
-                    helpers.time(fc.insertForeignCourtsData(country_name=country,
+                                        country_df=country_df)
+                    fc.insertForeignCourtsData(country_name=country,
                                                year=year,
                                                file=file,
                                                fileText=fileText,
@@ -99,7 +99,7 @@ def get_references(REGEX_FOLDER, DATA_FOLDER):
                                                id_num=ID_VAR,
                                                mysql_table=CITATION_TABLE_NAME,
                                                connection_info=ENGINE,
-                                               country_df=country_df))
+                                               country_df=country_df)
                     ID_VAR += 1
                 except Exception, e:
                     error_log.append('%s, %s, %s' % (country, file, e))
@@ -150,5 +150,5 @@ if __name__ == "__main__":
         elif o in ["-c", "--cglp_data_folder"]:
             DATA_FOLDER = a
         elif o in ["-n", "--country_name"]:
-            country = a
+            COUNTRY_LIST = [a]
     get_references(REGEX_FOLDER, DATA_FOLDER)
