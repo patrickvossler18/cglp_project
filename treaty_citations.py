@@ -8,7 +8,7 @@ def findallTreatyMatches(text, treaty_names):
     For +/- 10 words use r"(?i)((?:\S+\s+){0,10})\b" + re.escape(search_term)+ r"\b\s*((?:\S+\s+){0,10})"
     '''
     results = []
-    matches = treaty_names.query(text)
+    matches = treaty_names.query(text.encode('utf-8'))
     for match in matches:
         treaty_name = match[1]
         treaty_string = re.compile(r"(?i)((?:\S+\s+){0,10})\b" + re.escape(treaty_name)+ r"\b\s*((?:\S+\s+){0,10})",re.IGNORECASE)
@@ -51,8 +51,6 @@ def getTreatyData(text, regex_df, treaty_names, id_num, file, country_df,
         merged_results = merged_results.rename(columns={'matches': 'context'})
         merged_results['year'] = year
         merged_results['source_file_name'] = os.path.basename(file)
-        # ##UNTESTED####
-        # Use country id dataframe to assign a source country id based upon the country name from the file structure
         merged_results['source_country_id'] = country_df.loc[country_name][0]
         merged_results['id'] = id_num
         merged_results = merged_results.rename_axis(None)

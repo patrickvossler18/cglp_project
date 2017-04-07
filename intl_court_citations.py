@@ -10,7 +10,7 @@ def findallIntlCourtMatches(text, intl_court_names, term_idx=0):
     + re.escape(search_term)+ r"\b\s*((?:\S+\s+){0,10})"
     '''
     results = []
-    matches = intl_court_names.query(text)
+    matches = intl_court_names.query(text.encode('utf-8'))
     for match in matches:
         court_name = match[1]
         court_string = re.compile(r"(?i)((?:\S+\s+){0,10})\b" + re.escape(court_name) + r"\b\s*((?:\S+\s+){0,10})", re.IGNORECASE)

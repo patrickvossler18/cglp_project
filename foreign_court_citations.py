@@ -12,7 +12,7 @@ def findallForeignCourtMatches(text, country_names, court_names, cntry_name):
     For +/- 10 words use r"(?i)((?:\S+\s+){0,10})\b" + re.escape(search_term)+ r"\b\s*((?:\S+\s+){0,10})"
     '''
     results = []
-    matches = country_names.query(text)
+    matches = country_names.query(text.encode('utf-8'))
     for match in matches:
         country_name = match[1]
         # Remove this condition
@@ -31,7 +31,7 @@ def findallForeignCourtMatches(text, country_names, court_names, cntry_name):
         context = country_string.search(search_area)
         if context:
             context_string = context.group()
-            find_court = court_names.query(context_string)
+            find_court = court_names.query(context_string.encode('utf-8'))
             court_match = None
             for result in find_court:
                 if result[1][1] != ' ' and result[1][0] == country_name.strip():
@@ -72,8 +72,6 @@ def getForeignCourtsData(text, regex_df, country_names, court_names, id_num, fil
         merged_results['year'] = year
         merged_results['source_file_name'] = os.path.basename(file)
         merged_results['id'] = id_num
-        ###UNTESTED####
-        # Use country id dataframe to assign a source country id based upon the country name from the file structure
         merged_results['source_country_id'] = country_df.loc[country_name][0]
         merged_results = merged_results.rename_axis(None)
         # merged_results.drop(['index'],inplace=True,axis=1)

@@ -31,7 +31,7 @@ def unicode_csv_reader(utf8_data, dialect=csv.excel, **kwargs):
     next(utf8_data)
     csv_reader = csv.reader(utf8_data, dialect=dialect, **kwargs)
     for row in csv_reader:
-        yield [unicode(cell, 'utf-8') for cell in row]
+        yield [unicode(cell, 'utf-8').encode('utf-8').decode('utf-8') for cell in row]
 
 
 def getFileText(file_path, html=False, pdf_utf8=False):

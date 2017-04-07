@@ -14,7 +14,7 @@ def findallSoftLawMatches(text, softlaw_names):
     r"\b\s*((?:\S+\s+){0,10})"
     '''
     results = []
-    matches = softlaw_names.query(text)
+    matches = softlaw_names.query(text.encode('utf-8'))
     for match in matches:
         law_name = match[1]
         law_string = re.compile(r"(?i)((?:\S+\s+){0,10})\b" + re.escape(law_name)+ r"\b\s*((?:\S+\s+){0,10})",re.IGNORECASE)

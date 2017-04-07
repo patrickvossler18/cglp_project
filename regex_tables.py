@@ -6,9 +6,9 @@ import helpers
 
 def createSoftLawRegexDf(folder_path=None, file_name=None):
     # Get regex table
-    filename = 'softlaw_regex_20161003.csv'
+    file_name = 'softlaw_regex_20161003.csv'
     regex_table = []
-    reader = helpers.unicode_csv_reader(open(folder_path+filename))
+    reader = helpers.unicode_csv_reader(open(folder_path+file_name))
     for row in reader:
         regex_table.append(row)
     softlaw_names = esm.Index()
@@ -25,12 +25,11 @@ def createSoftLawRegexDf(folder_path=None, file_name=None):
 
 def createForeignCourtsDf(folder_path=None, file_name=None):
     # Get regex table
-    filename = 'foreign_courts_regex_20161007.csv'
+    file_name = 'foreign_courts_regex_20161007.csv'
     regex_table = []
-    reader = helpers.unicode_csv_reader(open(folder_path+filename))
+    reader = helpers.unicode_csv_reader(open(folder_path+file_name))
     for row in reader:
         regex_table.append(row)
-
     def extract_key(v):
         return v[0]
     data = sorted(regex_table, key=extract_key)
@@ -53,9 +52,9 @@ def createForeignCourtsDf(folder_path=None, file_name=None):
 
 def createIntlCourtsRegexDf(folder_path=None,file_name=None):
     # Get regex table
-    filename = 'intl_courts_regex_20161003.csv'
+    file_name = 'intl_courts_regex_20161003.csv'
     regex_table = []
-    reader = helpers.unicode_csv_reader(open(folder_path+filename))
+    reader = helpers.unicode_csv_reader(open(folder_path+file_name))
     for row in reader:
         regex_table.append(row)
     intl_court_names = esm.Index()
@@ -72,9 +71,9 @@ def createIntlCourtsRegexDf(folder_path=None,file_name=None):
 
 def createTreatiesRegexDf(folder_path=None,file_name=None):
     # Get regex table
-    filename = 'treaties_regex_20161003.csv'
+    file_name = 'treaties_regex_20161003.csv'
     regex_table = []
-    reader = helpers.unicode_csv_reader(open(folder_path+filename))
+    reader = helpers.unicode_csv_reader(open(folder_path+file_name))
     for row in reader:
         regex_table.append(row)
     treaty_names = esm.Index()
@@ -90,9 +89,9 @@ def createTreatiesRegexDf(folder_path=None,file_name=None):
 
 
 def createCountryDf(folder_path=None, file_name=None):
-    filename = 'country_ids_20161210.csv'
+    file_name = 'country_ids_20161210.csv'
     country_table = []
-    reader = helpers.unicode_csv_reader(open(folder_path+filename))
+    reader = helpers.unicode_csv_reader(open(folder_path+file_name))
     for row in reader:
         country_table.append(row)
     country_dict = dict((row[0], row[1]) for row in country_table)
