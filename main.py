@@ -107,7 +107,7 @@ def get_references(REGEX_FOLDER, DATA_FOLDER):
                     ID_VAR += 1
                     pass
     start_time = strftime("%d-%m-%Y", gmtime())
-    with open('error_log_%s.csv' % (start_time), 'wb') as csvfile:
+    with open('/tmp/error_log_%s.csv' % (start_time), 'wb') as csvfile:
         wr = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
         wr.writerow(error_log)
 

@@ -59,14 +59,15 @@ def getFileText(file_path, html=False, pdf_utf8=False):
         if len(page_text) <= num_pages:
             return None
         else:
-            if utf8:
+            if pdf_utf8:
                 return page_text.encode('utf-8')
             else:
                 return page_text
     if file_extension == ".rtf":
         doc = Rtf15Reader.read(open(file_path))
         page_text = PlaintextWriter.write(doc).getvalue()
-        return page_text
+        uni_page_text = page_text.decode('utf-8')
+        return uni_page_text
 
 
 def getCountryFiles(folder_path, country_name):
