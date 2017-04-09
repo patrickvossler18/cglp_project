@@ -102,6 +102,7 @@ def get_references(REGEX_FOLDER, DATA_FOLDER):
                                                country_df=country_df)
                     ID_VAR += 1
                 except Exception, e:
+                    print file
                     error_log.append('%s, %s, %s' % (country, file, e))
                     # logger.error('%s, %s, %s' % (country, file, e))
                     ID_VAR += 1
