@@ -598,7 +598,7 @@ def extractPhilippinesCourtReferences(file_path):
                 DecisionDate = day + "-" + month + "-" + year
         if participant is not None:
             ParticipantName = participant.text_content()
-        return CaseId, DecisionDate, ParticipantName
+        return CaseId, DecisionDate, ParticipantName.encode('utf-8')
     except Exception, e:
         print e
         raise
@@ -1151,7 +1151,7 @@ def insertCaseRefData(case_info, country_name, country_df, year, id,
 
 
 # # error = True
-# files = helpers.getCountryFiles('/home/ec2-user/CGLP_Data', 'Australia')
+# files = helpers.getCountryFiles('/Users/patrick/Dropbox/Fall 2016/SPEC/', 'Canada')
 # for year, folder in files.items():
 #     for file in folder:
 #         try:
