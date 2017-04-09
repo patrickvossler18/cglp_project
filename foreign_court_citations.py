@@ -108,4 +108,5 @@ def insertForeignCourtsData(country_name, year, file, fileText, regex_df,
                                  index=False, if_exists='append')
     except Exception, error:
         print error
+        print file
         raise
