@@ -57,6 +57,7 @@ def get_references(REGEX_FOLDER, DATA_FOLDER):
                                              country_df=country_df,
                                              year=year,
                                              id=ID_VAR,
+                                             source_file=file,
                                              mysql_table=CASE_TABLE_NAME,
                                              connection_info=ENGINE)
                     # Fix for pdfs because esm only accepting strings, not unicode

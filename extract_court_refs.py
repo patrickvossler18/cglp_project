@@ -1134,14 +1134,15 @@ countryRefFunctions = {
 }
 
 
-def insertCaseRefData(case_info, country_name, country_df, year, id,
-                      mysql_table, connection_info):
+def insertCaseRefData(case_info, country_name, country_df, year, id, 
+                      source_file, mysql_table, connection_info):
     try:
         case_info_list = list(case_info)
         case_info_list.extend([country_df.loc[country_name][0], year, id])
+        case_info_list.extend(source_file)
         case_info_df = pd.DataFrame(columns=['case_id', 'decision_date',
                                              'participant_name', 'country_id',
-                                             'year', 'id'])
+                                             'year', 'id', 'source_file_name'])
         case_info_df.loc[0] = case_info_list
         case_info_df.to_sql(name=mysql_table, con=connection_info,
                             index=False, if_exists='append')
