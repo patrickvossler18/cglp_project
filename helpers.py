@@ -83,7 +83,7 @@ def getCountryFiles(folder_path, country_name):
     regex = re.compile("([A-Za-z])\w.*")
     year_folders = {}
     for folder in sub_folders:
-        if folder != ".DS_Store":
+        if folder != ".DS_Store" or ".py" not in folder:
             path = full_path+folder
             if regex.findall(folder):
                 year = folder[-4:]
