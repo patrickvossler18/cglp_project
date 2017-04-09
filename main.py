@@ -104,6 +104,7 @@ def get_references(REGEX_FOLDER, DATA_FOLDER):
                 except Exception, e:
                     error_log.append('%s, %s, %s' % (country, file, e))
                     print file
+                    print type(fileText)
                     # logger.error('%s, %s, %s' % (country, file, e))
                     ID_VAR += 1
                     raise
