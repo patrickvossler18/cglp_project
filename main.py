@@ -61,7 +61,7 @@ def get_references(REGEX_FOLDER, DATA_FOLDER):
                                              mysql_table=CASE_TABLE_NAME,
                                              connection_info=ENGINE)
                     # Fix for pdfs because esm only accepting strings, not unicode
-                    fileText = helpers.getFileText(file, html=True, pdf_utf8=True)
+                    fileText = helpers.getFileText(file, html=True, pdf_utf8=False)
                     sl.insertSoftLawData(country_name=country, year=year,
                                          file=file, fileText=fileText,
                                          regex_df=soft_law_regex_df,
