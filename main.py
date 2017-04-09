@@ -108,10 +108,11 @@ def get_references(REGEX_FOLDER, DATA_FOLDER):
                     # logger.error('%s, %s, %s' % (country, file, e))
                     ID_VAR += 1
                     raise
-    start_time = strftime("%d-%m-%Y", gmtime())
-    with open('/tmp/error_log_%s.csv' % (start_time), 'wb') as csvfile:
-        wr = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
-        wr.writerow(error_log)
+    if len(error_log) > 0:                    
+        start_time = strftime("%d-%m-%Y", gmtime())
+        with open('/tmp/error_log_%s.csv' % (start_time), 'wb') as csvfile:
+            wr = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
+            wr.writerow(error_log)
 
 
 if __name__ == "__main__":
