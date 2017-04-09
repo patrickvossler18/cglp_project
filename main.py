@@ -103,11 +103,9 @@ def get_references(REGEX_FOLDER, DATA_FOLDER):
                     ID_VAR += 1
                 except Exception, e:
                     error_log.append('%s, %s, %s' % (country, file, e))
-                    print file
-                    print type(fileText)
                     # logger.error('%s, %s, %s' % (country, file, e))
                     ID_VAR += 1
-                    raise
+                    pass
     start_time = strftime("%d-%m-%Y", gmtime())
     with open('/tmp/error_log_%s.csv' % (start_time), 'wb') as csvfile:
         wr = csv.writer(csvfile, quoting=csv.QUOTE_ALL)

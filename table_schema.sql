@@ -28,3 +28,4 @@ CREATE TABLE `case_info`(
 `source_file_name` varchar(100) DEFAULT NULL,
 PRIMARY KEY (`id`)
 )ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
