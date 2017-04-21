@@ -40,34 +40,36 @@ def getFileText(file_path, html=False, pdf_utf8=False):
     output: either raw string or parsed html text content
     '''
     file_extension = os.path.splitext(file_path)[1]
-    if file_extension.lower() == ".html" or file_extension.lower() == '.htm':
-        file_content = open(file_path).read()
-        if html:
-            html_text = lh.fromstring(file_content).text_content()
-            return html_text
-        else:
-            return file_content
-    if file_extension == ".pdf":
-        pdf_content = open(file_path, "rb")
-        pdfReader = PyPDF2.PdfFileReader(pdf_content)
-        num_pages = pdfReader.getNumPages()
-        page_text = ""
-        for i in range(0, num_pages):
-            pageObj = pdfReader.getPage(i)
-            page_text = page_text + " " + pageObj.extractText()
-        # Need to check for pdfs that are just scanned images
-        if len(page_text) <= num_pages:
-            return None
-        else:
-            if pdf_utf8:
-                return page_text.encode('utf-8')
+    if file_extension.lower() != ".py":
+        if file_extension.lower() == ".html" or file_extension.lower() == '.htm':
+            file_content = open(file_path).read()
+            if html:
+                html_text = lh.fromstring(file_content).text_content()
+                return html_text
             else:
-                return page_text
-    if file_extension == ".rtf":
-        doc = Rtf15Reader.read(open(file_path))
-        page_text = PlaintextWriter.write(doc).getvalue()
-        uni_page_text = page_text.decode('utf-8')
-        return uni_page_text
+                return file_content
+        if file_extension == ".pdf":
+            pdf_content = open(file_path, "rb")
+            pdfReader = PyPDF2.PdfFileReader(pdf_content)
+            num_pages = pdfReader.getNumPages()
+            page_text = ""
+            for i in range(0, num_pages):
+                pageObj = pdfReader.getPage(i)
+                page_text = page_text + " " + pageObj.extractText()
+            # Need to check for pdfs that are just scanned images
+            if len(page_text) <= num_pages:
+                return None
+            else:
+                if pdf_utf8:
+                    return page_text.encode('utf-8')
+                else:
+                    return page_text
+        if file_extension == ".rtf":
+            doc = Rtf15Reader.read(open(file_path))
+            page_text = PlaintextWriter.write(doc).getvalue()
+            uni_page_text = page_text.decode('utf-8')
+            return uni_page_text
+    return ""
 
 
 def getCountryFiles(folder_path, country_name):
@@ -84,7 +86,7 @@ def getCountryFiles(folder_path, country_name):
     year_folders = {}
     for folder in sub_folders:
         if folder != ".DS_Store" or ".py" not in folder:
-            path = full_path+folder
+            path = full_path+'/'+folder
             if regex.findall(folder):
                 year = folder[-4:]
             else:
