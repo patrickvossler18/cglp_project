@@ -689,23 +689,23 @@ def extractUgandaCourtReferences(file_path):
         file_content = helpers.getFileText(file_path, html=False)
         if file_content:
             html_text = lh.fromstring(file_content)
-        div_text = html_text.findall(".//div[@class='field-item']")
-        if len(div_text) > 0:
-            CaseId = div_text[1]
-            DecisionDate = div_text[2]
-        title_text = html_text.find(".//title")
-        if title_text is not None:
-            participantString = title_text.text_content()
-        if " v " in participantString.lower():
-            splitString = participantString.split(" v ")
-            ParticipantName = splitString[0]
-        if "vs." in participantString.lower():
-            splitString = participantString.split("vs.")
-            ParticipantName = splitString[0]
-        elif "and" in participantString.lower():
-            splitString = participantString.split("and")
-            ParticipantName = splitString[0]
-        return CaseId, DecisionDate, ParticipantName
+            div_text = html_text.findall(".//div[@class='field-item']")
+            if len(div_text) > 0:
+                CaseId = div_text[1]
+                DecisionDate = div_text[2]
+            title_text = html_text.find(".//title")
+            if title_text is not None:
+                participantString = title_text.text_content()
+            if " v " in participantString.lower():
+                splitString = participantString.split(" v ")
+                ParticipantName = splitString[0]
+            if "vs." in participantString.lower():
+                splitString = participantString.split("vs.")
+                ParticipantName = splitString[0]
+            elif "and" in participantString.lower():
+                splitString = participantString.split("and")
+                ParticipantName = splitString[0]
+            return CaseId, DecisionDate, ParticipantName
     except Exception, e:
         print e
         raise
