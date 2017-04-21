@@ -62,45 +62,46 @@ def get_references(REGEX_FOLDER, DATA_FOLDER):
                                              connection_info=ENGINE)
                     # Fix for pdfs because esm only accepting strings, not unicode
                     fileText = helpers.getFileText(file, html=True, pdf_utf8=False)
-                    sl.insertSoftLawData(country_name=country, year=year,
-                                         file=file, fileText=fileText,
-                                         regex_df=soft_law_regex_df,
-                                         softlaw_names=softlaw_names,
-                                         id_num=ID_VAR,
-                                         mysql_table=CITATION_TABLE_NAME,
-                                         connection_info=ENGINE,
-                                         country_df=country_df)
-                    ic.insertIntlCourtData(country_name=country,
-                                           year=year,
-                                           file=file,
-                                           fileText=fileText,
-                                           regex_df=intl_court_regex_df,
-                                           intl_court_names=intl_court_names,
-                                           id_num=ID_VAR,
-                                           mysql_table=CITATION_TABLE_NAME,
-                                           connection_info=ENGINE,
-                                           country_df=country_df)
-                    tc.insertTreatyData(country_name=country,
-                                        year=year,
-                                        file=file,
-                                        fileText=fileText,
-                                        regex_df=treaties_regex_df,
-                                        treaty_names=treaty_names,
-                                        id_num=ID_VAR,
-                                        mysql_table=CITATION_TABLE_NAME,
-                                        connection_info=ENGINE,
-                                        country_df=country_df)
-                    fc.insertForeignCourtsData(country_name=country,
+                    if fileText is not None:
+                        sl.insertSoftLawData(country_name=country, year=year,
+                                             file=file, fileText=fileText,
+                                             regex_df=soft_law_regex_df,
+                                             softlaw_names=softlaw_names,
+                                             id_num=ID_VAR,
+                                             mysql_table=CITATION_TABLE_NAME,
+                                             connection_info=ENGINE,
+                                             country_df=country_df)
+                        ic.insertIntlCourtData(country_name=country,
                                                year=year,
                                                file=file,
                                                fileText=fileText,
-                                               regex_df=fc_regex_df,
-                                               country_names=fc_country_names,
-                                               court_names=fc_court_names,
+                                               regex_df=intl_court_regex_df,
+                                               intl_court_names=intl_court_names,
                                                id_num=ID_VAR,
                                                mysql_table=CITATION_TABLE_NAME,
                                                connection_info=ENGINE,
                                                country_df=country_df)
+                        tc.insertTreatyData(country_name=country,
+                                            year=year,
+                                            file=file,
+                                            fileText=fileText,
+                                            regex_df=treaties_regex_df,
+                                            treaty_names=treaty_names,
+                                            id_num=ID_VAR,
+                                            mysql_table=CITATION_TABLE_NAME,
+                                            connection_info=ENGINE,
+                                            country_df=country_df)
+                        fc.insertForeignCourtsData(country_name=country,
+                                                   year=year,
+                                                   file=file,
+                                                   fileText=fileText,
+                                                   regex_df=fc_regex_df,
+                                                   country_names=fc_country_names,
+                                                   court_names=fc_court_names,
+                                                   id_num=ID_VAR,
+                                                   mysql_table=CITATION_TABLE_NAME,
+                                                   connection_info=ENGINE,
+                                                   country_df=country_df)
                     ID_VAR += 1
                 except Exception, e:
                     print file
