@@ -69,7 +69,7 @@ def getFileText(file_path, html=False, pdf_utf8=False):
             page_text = PlaintextWriter.write(doc).getvalue()
             uni_page_text = page_text.decode('utf-8')
             return uni_page_text
-    return ""
+    return None
 
 
 def getCountryFiles(folder_path, country_name):
