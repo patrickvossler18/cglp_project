@@ -833,37 +833,37 @@ def extractUnitedStatesCourtReferences(file_path):
         file_content = helpers.getFileText(file_path, html=False)
         if file_content:
             html_text = lh.fromstring(file_content.decode('utf-8', 'ignore'))
-        extractedText = html_text.find(".//center")
-        details1 = html_text.findall(".//center")
-        caseIdString = ''
-        if len(details1) > 0:
-            for center in details1:
-                if "No." in center.text_content():
-                    caseIdString = center.text_content()
-                    break
-            for center in details1:
-                if "[" in center.text_content():
-                    decisionString = center.text_content()
-                    break
-        if len(caseIdString) > 0:
-            caseSearchString = re.compile('No\.\s\d+\-\d+|No\.\s\d{2,3}|Nos\.\s\d+.+\s\d{2,3}')
-            if caseSearchString.search(caseIdString) is not None:
-                caseString = caseSearchString.search(caseIdString).group().replace('No.', '').replace('Nos.', '').strip()
-                CaseId = caseString
-            decidedDateIdx = caseIdString.find('Decided')
-            if decidedDateIdx != -1:
-                DecisionDate = caseIdString[decidedDateIdx+8:decidedDateIdx+24].replace('.', '').strip()
-        if len(caseIdString) == 0 and decisionString is not None:
-            DecisionDate = decisionString.replace('[', '').replace(']', '')
-        if extractedText is not None:
-            participantString = extractedText.text_content().strip()
-            participantSplit = participantString.split('\n')
-            for split in participantSplit:
-                if "v." in split.lower():
-                    ParticipantName = split.strip()
-                    break
-            if len(ParticipantName) > 5000:
-                ParticipantName = ''
+            extractedText = html_text.find(".//center")
+            details1 = html_text.findall(".//center")
+            caseIdString = ''
+            if len(details1) > 0:
+                for center in details1:
+                    if "No." in center.text_content():
+                        caseIdString = center.text_content()
+                        break
+                for center in details1:
+                    if "[" in center.text_content():
+                        decisionString = center.text_content()
+                        break
+            if len(caseIdString) > 0:
+                caseSearchString = re.compile('No\.\s\d+\-\d+|No\.\s\d{2,3}|Nos\.\s\d+.+\s\d{2,3}')
+                if caseSearchString.search(caseIdString) is not None:
+                    caseString = caseSearchString.search(caseIdString).group().replace('No.', '').replace('Nos.', '').strip()
+                    CaseId = caseString
+                decidedDateIdx = caseIdString.find('Decided')
+                if decidedDateIdx != -1:
+                    DecisionDate = caseIdString[decidedDateIdx+8:decidedDateIdx+24].replace('.', '').strip()
+            if len(caseIdString) == 0 and decisionString is not None:
+                DecisionDate = decisionString.replace('[', '').replace(']', '')
+            if extractedText is not None:
+                participantString = extractedText.text_content().strip()
+                participantSplit = participantString.split('\n')
+                for split in participantSplit:
+                    if "v." in split.lower():
+                        ParticipantName = split.strip()
+                        break
+                if len(ParticipantName) > 5000:
+                    ParticipantName = ''
         return CaseId, DecisionDate, ParticipantName
     except Exception, e:
             print e
