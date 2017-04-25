@@ -37,22 +37,21 @@ def get_references(REGEX_FOLDER, DATA_FOLDER):
     for country in COUNTRY_LIST:
         print country
         countryFiles = helpers.getCountryFiles(DATA_FOLDER, country)
+        if country == 'USA':
+            country = 'United States'
+        if country == 'UK':
+            country = 'United Kingdom'
         for year, folder in countryFiles.items():
             # go through dictionary of files and insert into mysql table
             for file in tqdm(folder):
                 try:
-                    if country == 'USA':
-                        country = 'United States'
-                    if country == 'UK':
-                        country = 'United Kingdom'
+                    if country == 'United Kingdom':
                         for function in cr.countryRefFunctions[country]:
                             case = function(file)
-                            print case
                             if case is not None:
                                 caseInfo = case
                                 # break
                     else:
-                        print country
                         caseInfo = cr.countryRefFunctions[country](file)
                     if caseInfo is not None:
                         cr.insertCaseRefData(case_info=caseInfo,
