@@ -29,7 +29,7 @@ def get_references(REGEX_FOLDER, DATA_FOLDER):
     country_df = rt.createCountryDf(folder_path=REGEX_FOLDER, file_name='country_ids_20161210.csv')
 
     # connect to mysql server and create tables
-    helpers.createTables(DATABASE_NAME, PASSWORD)
+    helpers.createTables(DATABASE_NAME, PASSWORD, drop_table=True)
     ENGINE = helpers.connectDb(DATABASE_NAME, PASSWORD)
     ID_VAR = 1
     error_log = []

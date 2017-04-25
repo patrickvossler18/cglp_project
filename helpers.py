@@ -31,7 +31,7 @@ def createTables(db_name, db_password, drop_table=False):
     db = mysql.connect(host='127.0.0.1', port=3306, user='root', db= db_name, passwd=db_password)
     c = db.cursor(MySQLdb.cursors.DictCursor)
     c1 = db.cursor(MySQLdb.cursors.DictCursor)
-    c2 = db.cursors(MySQLdb.cursors.DictCursor)
+    c2 = db.cursor(MySQLdb.cursors.DictCursor)
     if drop_table:
         c.execute("DROP TABLE IF EXISTS citations; DROP TABLE IF EXISTS case_info")
     c1.execute("CREATE TABLE `citations`( `id` int(11) NOT NULL, `citation_id` int(11) NOT NULL AUTO_INCREMENT, `citation_type` int(11) DEFAULT NULL, `year` int (11) DEFAULT NULL, `source_country_id` int(11) DEFAULT NULL, `source_court_id` int(11) DEFAULT NULL, `country_id` int(11) DEFAULT NULL, `court_code` int(11) DEFAULT NULL, `court_id` int(11) DEFAULT NULL, `intl_crt_id` int(11) DEFAULT NULL, `treaty_id` int(11) DEFAULT NULL, `softlaw_id` int(11) DEFAULT NULL, `context` varchar(2000) DEFAULT NULL, `source_file_name` varchar(100) DEFAULT NULL, PRIMARY KEY (`id`,`citation_id`))ENGINE=MyISAM DEFAULT CHARSET=utf8")
