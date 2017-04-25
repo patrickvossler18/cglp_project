@@ -49,7 +49,7 @@ def get_references(REGEX_FOLDER, DATA_FOLDER):
                             case = function(file)
                             if case is not None:
                                 caseInfo = case
-                                break
+                                # break
                     else:
                         print country
                         caseInfo = cr.countryRefFunctions[country](file)
