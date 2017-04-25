@@ -28,7 +28,8 @@ def get_references(REGEX_FOLDER, DATA_FOLDER):
     fc_country_names, fc_court_names, fc_regex_df = rt.createForeignCourtsDf(folder_path=REGEX_FOLDER, file_name='foreign_courts_regex_20161007.csv')
     country_df = rt.createCountryDf(folder_path=REGEX_FOLDER, file_name='country_ids_20161210.csv')
 
-    # connect to mysql server
+    # connect to mysql server and create tables
+    helpers.createTables(DATABASE_NAME, PASSWORD)
     ENGINE = helpers.connectDb(DATABASE_NAME, PASSWORD)
     ID_VAR = 1
     error_log = []

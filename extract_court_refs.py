@@ -6,7 +6,7 @@ from dateutil.parser import parse
 import re
 import translations
 import helpers
-
+import os
 
 def extractAustriaCourtReferences(file_path):
     CaseId = ''
@@ -1139,7 +1139,7 @@ def insertCaseRefData(case_info, country_name, country_df, year, id,
     try:
         case_info_list = list(case_info)
         case_info_list.extend([country_df.loc[country_name][0], year, id])
-        case_info_list.extend([source_file])
+        case_info_list.extend([os.path.basename(source_file)])
         case_info_df = pd.DataFrame(columns=['case_id', 'decision_date',
                                              'participant_name', 'country_id',
                                              'year', 'id', 'source_file_name'])
