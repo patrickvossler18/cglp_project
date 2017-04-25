@@ -58,8 +58,12 @@ def getFileText(file_path, html=False, pdf_utf8=False):
         if file_extension.lower() == ".html" or file_extension.lower() == '.htm':
             file_content = open(file_path).read()
             if html:
-                html_text = lh.fromstring(file_content).text_content()
-                return html_text
+                try:
+                    html_text = lh.fromstring(file_content).text_content()
+                    return html_text
+                except UnicodeDecodeError:
+                    html_text = lh.fromstring(helpers.convert_encoding(file_content)).text_content()
+                    return html_text
             else:
                 return file_content
         if file_extension == ".pdf":
