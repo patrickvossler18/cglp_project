@@ -51,6 +51,7 @@ def get_references(REGEX_FOLDER, DATA_FOLDER):
                                 caseInfo = case
                                 break
                     else:
+                        print country
                         caseInfo = cr.countryRefFunctions[country](file)
                     if caseInfo is not None:
                         cr.insertCaseRefData(case_info=caseInfo,
