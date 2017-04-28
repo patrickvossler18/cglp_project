@@ -1017,11 +1017,12 @@ def extractBelgiumCourtReferences(file_path):
         decisionString = decisionDatePatternString.search(file_content)
         if decisionString is not None:
             dateString = decisionString.group()
+            dateString = dateString.replace("\n", " ")
             decisionSplit = dateString.split(" ")
             day = decisionSplit[1]
             month = translations.frenchtoEngMonth.get(decisionSplit[2], '')
             year = decisionSplit[3]
-            DecisionDate = day + month + year
+            DecisionDate = ' '.join([day, month, year])
         return CaseId, DecisionDate, ParticipantName
     except Exception, e:
             print e
