@@ -62,7 +62,11 @@ def getFileText(file_path, html=False, pdf_utf8=False):
                     html_text = lh.fromstring(file_content).text_content()
                     return html_text
                 except UnicodeDecodeError:
-                    html_text = lh.fromstring(helpers.convert_encoding(file_content)).text_content()
+                    try:
+                        html_text = lh.fromstring(helpers.convert_encoding(file_content)).text_content()
+                    except UnicodeDecodeError:
+                        html_text = lh.fromstring(unicode(file_content, errors = 'ignore')).text_content()
+                        return html_text
                     return html_text
             else:
                 return file_content
