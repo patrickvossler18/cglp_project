@@ -33,6 +33,7 @@ def get_references(REGEX_FOLDER, DATA_FOLDER):
     ENGINE = helpers.connectDb(DATABASE_NAME, PASSWORD)
     ID_VAR = 1
     error_log = []
+    written_log = False
 
     for country in COUNTRY_LIST:
         print country
@@ -110,7 +111,7 @@ def get_references(REGEX_FOLDER, DATA_FOLDER):
                     error_log.append('%s, %s, %s' % (country, file, e))
                     # logger.error('%s, %s, %s' % (country, file, e))
                     ID_VAR += 1
-                    raise
+                    pass
     if len(error_log) > 0:
         start_time = strftime("%d-%m-%Y", gmtime())
         with open('/tmp/error_log_%s.csv' % (start_time), 'wb') as csvfile:
