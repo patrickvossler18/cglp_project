@@ -29,7 +29,7 @@ def connectDb(db_name, db_password):
 
 
 def createTables(db_name, db_password, drop_table=False):
-    db = mysql.connect(host='127.0.0.1', port=3306, user='root', db= db_name, passwd=db_password)
+    db = mysql.connect(host='127.0.0.1', port=3306, user='root', db=db_name, passwd=db_password)
     c = db.cursor(MySQLdb.cursors.DictCursor)
     c1 = db.cursor(MySQLdb.cursors.DictCursor)
     c2 = db.cursor(MySQLdb.cursors.DictCursor)
