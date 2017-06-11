@@ -27,6 +27,7 @@ def connectDb(db_name, db_password):
     engine = create_engine("mysql+mysqldb://root:%s@localhost/%s?charset=utf8" % (db_password, db_name), encoding='utf-8')
     return engine
 
+
 def createTables(db_name, db_password, drop_table=False):
     db = mysql.connect(host='127.0.0.1', port=3306, user='root', db= db_name, passwd=db_password)
     c = db.cursor(MySQLdb.cursors.DictCursor)
@@ -65,7 +66,7 @@ def getFileText(file_path, html=False, pdf_utf8=False):
                     try:
                         html_text = lh.fromstring(helpers.convert_encoding(file_content)).text_content()
                     except UnicodeDecodeError:
-                        html_text = lh.fromstring(unicode(file_content, errors = 'ignore')).text_content()
+                        html_text = lh.fromstring(unicode(file_content, errors='ignore')).text_content()
                         return html_text
                     return html_text
             else:
@@ -122,7 +123,6 @@ def getCountryFiles(folder_path, country_name):
         for folder in sub_folders:
             if folder != ".DS_Store" and ".py" not in folder:
                 path = full_path+'/'+folder
-                subs = os.listdir(path)
                 if regex.findall(folder):
                     year = folder[-4:]
                 else:

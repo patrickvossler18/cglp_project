@@ -30,7 +30,7 @@ def findallForeignCourtMatches(text, country_names, court_names, cntry_name):
         search_area = text[lower_bound:upper_bound]
         context = country_string.search(search_area)
         if context:
-            context_string = context.group()
+            context_string = context.group().replace("\n", "").replace("\r\n", "")
             find_court = court_names.query(context_string.encode('utf-8'))
             court_match = None
             for result in find_court:

@@ -30,7 +30,7 @@ def findallSoftLawMatches(text, softlaw_names):
         search_area = text[lower_bound:upper_bound]
         context = law_string.search(search_area)
         if context:
-            context_string = context.group()
+            context_string = context.group().replace("\n", "").replace("\r\n", "")
             match = [law_name, context_string]
             results.append(match)
     results = [list(x) for x in set(tuple(x) for x in results)]

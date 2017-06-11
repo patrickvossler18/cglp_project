@@ -26,7 +26,8 @@ def findallIntlCourtMatches(text, intl_court_names, term_idx=0):
         search_area = text[lower_bound:upper_bound]
         context = court_string.search(search_area)
         if context:
-            context_string = context.group()
+            # Clean up context_string so that excel output is readable
+            context_string = context.group().replace("\n", "").replace("\r\n", "")
             match = [court_name, context_string]
             results.append(match)
     results = [list(x) for x in set(tuple(x) for x in results)]

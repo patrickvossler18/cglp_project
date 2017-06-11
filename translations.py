@@ -121,6 +121,7 @@ spanishtoEngDeMil["de mil novecientos noventa y seis"] = "1996"
 spanishtoEngDeMil["de mil novecientos noventa y siete"] = "1997"
 spanishtoEngDeMil["de mil novecientos noventa y ocho"] = "1998"
 spanishtoEngDeMil["de mil novecientos noventa y nueve"] = "1999"
+spanishtoEngDeMil["de mil novecientos noventisiete"] = "1997"
 
 frenchtoEngMonth = {}
 frenchtoEngMonth["janvier"] = "january"
