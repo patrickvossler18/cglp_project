@@ -638,7 +638,7 @@ def extractSwitzerlandCourtReferences(file_path):
         title_text = html_text.find(".//title")
         if title_text is not None:
             CaseId = title_text.text_content()
-        div_text = html_text.find(".//div[@class='paraatf")
+        div_text = html_text.find(".//div[@class='paraatf'")
         if div_text is not None:
             dateString = div_text.text_content()
             # need to check french and german
