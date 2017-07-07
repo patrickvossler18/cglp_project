@@ -8,6 +8,7 @@ import translations
 import helpers
 import os
 
+
 def extractAustriaCourtReferences(file_path):
     CaseId = ''
     DecisionDate = ''
@@ -638,7 +639,7 @@ def extractSwitzerlandCourtReferences(file_path):
         title_text = html_text.find(".//title")
         if title_text is not None:
             CaseId = title_text.text_content()
-        div_text = html_text.find(".//div[@class='paraatf'")
+        div_text = html_text.find(".//div[@class='paraatf']")
         if div_text is not None:
             dateString = div_text.text_content()
             # need to check french and german
@@ -647,6 +648,7 @@ def extractSwitzerlandCourtReferences(file_path):
             if yearString.search(dateString) is not None:
                 year = yearString.search(dateString).group()
             month = ''
+            day = ''
             dayString = re.compile("(de|du|de la) (0[1-9]|[0-9]+)")
             if dayString.search(dateString) is not None:
                 day = dayString.search(dateString).group()
