@@ -29,3 +29,5 @@ CREATE TABLE `case_info`(
 PRIMARY KEY (`id`)
 )ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+
+CREATE TABLE `country_ids`( `country_id` int(11) NOT NULL, `country_name` varchar(110) NOT NULL,  PRIMARY KEY (`country_id`))ENGINE=MyISAM DEFAULT CHARSET=utf8
