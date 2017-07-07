@@ -1054,6 +1054,8 @@ def extractIndiaCourtReferences(file_path):
                     CaseId = CaseId.replace(':', '').strip()
             petitionerPatternString = re.compile("(PETITIONER\:?)\r?\n?\r?.*")
             petitionerIdString = petitionerPatternString.search(extractedText)
+            petitionerText = ''
+            respondentText = ''
             if petitionerIdString is not None:
                 petitionerText = petitionerIdString.group().replace('PETITIONER', '').strip()
                 petitionerText = petitionerText.replace(':', '').strip()
@@ -1062,7 +1064,7 @@ def extractIndiaCourtReferences(file_path):
             if respondentIdString is not None:
                 respondentText = respondentIdString.group().replace('RESPONDENT', '').strip()
                 respondentText = respondentText.replace(':', '').strip()
-            if petitionerText and respondentText:
+            if len(petitionerText) > 0 and len(respondentText) > 0:
                 ParticipantName = petitionerText + " versus " + respondentText
             datePatternString = re.compile("(DATE OF JUDGMENT\:?)\r?\n?\r?.*")
             dateString = datePatternString.search(extractedText)

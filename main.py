@@ -115,7 +115,7 @@ def get_references(REGEX_FOLDER, DATA_FOLDER):
     if len(error_log) > 0:
         start_time = strftime("%d-%m-%Y", gmtime())
         with open('/home/ec2-user/error_log_%s.csv' % (start_time), 'wb') as csvfile:
-            wr = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
+            wr = csv.writer(csvfile)
             wr.writerow(error_log)
 
 
