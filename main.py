@@ -111,7 +111,7 @@ def get_references(REGEX_FOLDER, DATA_FOLDER):
                     error_log.append('%s, %s, %s' % (country, file, e))
                     # logger.error('%s, %s, %s' % (country, file, e))
                     ID_VAR += 1
-                    raise
+                    pass
     if len(error_log) > 0:
         start_time = strftime("%d-%m-%Y", gmtime())
         with open('/home/ec2-user/error_log_%s.csv' % (start_time), 'wb') as csvfile:
@@ -158,4 +158,7 @@ if __name__ == "__main__":
             DATA_FOLDER = a
         elif o in ["-n", "--country_name"]:
             COUNTRY_LIST = [a]
+    run_start_time = strftime("%d-%m-%Y %H:%M:%S", gmtime())
     get_references(REGEX_FOLDER, DATA_FOLDER)
+    run_end_time = strftime("%d-%m-%Y %H:%M:%S", gmtime())
+    print run_start_time, run_end_time
