@@ -671,7 +671,7 @@ def extractSwitzerlandCourtReferences(file_path):
                     dayStringGer = re.compile('(vom) (0[1-9]|[0-9]+)')
                     if dayStringGer.search(dateString) is not None:
                         day = dayStringGer.search(dateString).group()
-                if len(month == 0):
+                if len(month) == 0:
                     for key, value in translations.swissToEnglishMonth.items():
                         if key.decode('utf-8') in dateString:
                             month = value
