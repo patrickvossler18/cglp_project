@@ -11,6 +11,7 @@ import getopt
 # import logging
 from time import gmtime, strftime
 import csv
+import concurrent.futures
 
 
 def get_references(REGEX_FOLDER, DATA_FOLDER):
@@ -31,9 +32,73 @@ def get_references(REGEX_FOLDER, DATA_FOLDER):
     # connect to mysql server and create tables
     helpers.createTables(DATABASE_NAME, PASSWORD, drop_table=True)
     ENGINE = helpers.connectDb(DATABASE_NAME, PASSWORD)
+    global ID_VAR
     ID_VAR = 1
     error_log = []
     written_log = False
+
+    def insertData(file):
+        if country == 'United Kingdom':
+                        for function in cr.countryRefFunctions[country]:
+                            case = function(file)
+                            if case is not None:
+                                caseInfo = case
+                                # break
+        else:
+            caseInfo = cr.countryRefFunctions[country](file)
+        if caseInfo is not None:
+            cr.insertCaseRefData(case_info=caseInfo,
+                                 country_name=country,
+                                 country_df=country_df,
+                                 year=year,
+                                 id=ID_VAR,
+                                 source_file=file,
+                                 mysql_table=CASE_TABLE_NAME,
+                                 connection_info=ENGINE)
+        # Fix for pdfs because esm only accepting strings, not unicode
+        fileText = helpers.getFileText(file, html=True, pdf_utf8=False)
+        if fileText is not None:
+            sl.insertSoftLawData(country_name=country, year=year,
+                                 file=file, fileText=fileText,
+                                 regex_df=soft_law_regex_df,
+                                 softlaw_names=softlaw_names,
+                                 id_num=ID_VAR,
+                                 mysql_table=CITATION_TABLE_NAME,
+                                 connection_info=ENGINE,
+                                 country_df=country_df)
+            ic.insertIntlCourtData(country_name=country,
+                                   year=year,
+                                   file=file,
+                                   fileText=fileText,
+                                   regex_df=intl_court_regex_df,
+                                   intl_court_names=intl_court_names,
+                                   id_num=ID_VAR,
+                                   mysql_table=CITATION_TABLE_NAME,
+                                   connection_info=ENGINE,
+                                   country_df=country_df)
+            tc.insertTreatyData(country_name=country,
+                                year=year,
+                                file=file,
+                                fileText=fileText,
+                                regex_df=treaties_regex_df,
+                                treaty_names=treaty_names,
+                                id_num=ID_VAR,
+                                mysql_table=CITATION_TABLE_NAME,
+                                connection_info=ENGINE,
+                                country_df=country_df)
+            fc.insertForeignCourtsData(country_name=country,
+                                       year=year,
+                                       file=file,
+                                       fileText=fileText,
+                                       regex_df=fc_regex_df,
+                                       country_names=fc_country_names,
+                                       court_names=fc_court_names,
+                                       id_num=ID_VAR,
+                                       mysql_table=CITATION_TABLE_NAME,
+                                       connection_info=ENGINE,
+                                       country_df=country_df)
+        global ID_VAR
+        ID_VAR += 1
 
     for country in COUNTRY_LIST:
         print country
@@ -42,81 +107,16 @@ def get_references(REGEX_FOLDER, DATA_FOLDER):
             country = 'United States'
         if country == 'UK':
             country = 'United Kingdom'
-        for year, folder in countryFiles.items():
-            # go through dictionary of files and insert into mysql table
-            for file in tqdm(folder):
+
+        with concurrent.futures.ProcessPoolExecutor() as executor:
+            for year, folder in countryFiles.items():
+                # go through dictionary of files and insert into mysql table
                 try:
-                    if country == 'United Kingdom':
-                        for function in cr.countryRefFunctions[country]:
-                            case = function(file)
-                            if case is not None:
-                                caseInfo = case
-                                # break
-                    else:
-                        caseInfo = cr.countryRefFunctions[country](file)
-                    if caseInfo is not None:
-                        cr.insertCaseRefData(case_info=caseInfo,
-                                             country_name=country,
-                                             country_df=country_df,
-                                             year=year,
-                                             id=ID_VAR,
-                                             source_file=file,
-                                             mysql_table=CASE_TABLE_NAME,
-                                             connection_info=ENGINE)
-                    # Fix for pdfs because esm only accepting strings, not unicode
-                    fileText = helpers.getFileText(file, html=True, pdf_utf8=False)
-                    if fileText is not None:
-                        sl.insertSoftLawData(country_name=country, year=year,
-                                             file=file, fileText=fileText,
-                                             regex_df=soft_law_regex_df,
-                                             softlaw_names=softlaw_names,
-                                             id_num=ID_VAR,
-                                             mysql_table=CITATION_TABLE_NAME,
-                                             connection_info=ENGINE,
-                                             country_df=country_df)
-                        ic.insertIntlCourtData(country_name=country,
-                                               year=year,
-                                               file=file,
-                                               fileText=fileText,
-                                               regex_df=intl_court_regex_df,
-                                               intl_court_names=intl_court_names,
-                                               id_num=ID_VAR,
-                                               mysql_table=CITATION_TABLE_NAME,
-                                               connection_info=ENGINE,
-                                               country_df=country_df)
-                        tc.insertTreatyData(country_name=country,
-                                            year=year,
-                                            file=file,
-                                            fileText=fileText,
-                                            regex_df=treaties_regex_df,
-                                            treaty_names=treaty_names,
-                                            id_num=ID_VAR,
-                                            mysql_table=CITATION_TABLE_NAME,
-                                            connection_info=ENGINE,
-                                            country_df=country_df)
-                        fc.insertForeignCourtsData(country_name=country,
-                                                   year=year,
-                                                   file=file,
-                                                   fileText=fileText,
-                                                   regex_df=fc_regex_df,
-                                                   country_names=fc_country_names,
-                                                   court_names=fc_court_names,
-                                                   id_num=ID_VAR,
-                                                   mysql_table=CITATION_TABLE_NAME,
-                                                   connection_info=ENGINE,
-                                                   country_df=country_df)
-                    ID_VAR += 1
+                    executor.map(insertData, folder)
                 except Exception, e:
-                    print file
-                    error_log.append('%s, %s, %s' % (country, file, e))
-                    # logger.error('%s, %s, %s' % (country, file, e))
+                    print e
                     ID_VAR += 1
                     pass
-    if len(error_log) > 0:
-        start_time = strftime("%d-%m-%Y", gmtime())
-        with open('/home/ec2-user/error_log_%s.csv' % (start_time), 'wb') as csvfile:
-            wr = csv.writer(csvfile)
-            wr.writerow(error_log)
 
 
 if __name__ == "__main__":
@@ -138,8 +138,8 @@ if __name__ == "__main__":
                     'Philippines', 'South Africa', 'Spain', 'Switzerland',
                     'Uganda', 'UK', 'USA', 'Zimbabwe']
     INCOMPLETE_COUNTRIES = ['Latvia']
-    CITATION_TABLE_NAME = 'citations'
-    CASE_TABLE_NAME = 'case_info'
+    CITATION_TABLE_NAME = 'citations_test'
+    CASE_TABLE_NAME = 'case_info_test'
     DATABASE_NAME = 'cglp'
     PASSWORD = 'cglp'
 

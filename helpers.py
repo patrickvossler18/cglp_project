@@ -35,10 +35,10 @@ def createTables(db_name, db_password, drop_table=False):
     c2 = db.cursor(MySQLdb.cursors.DictCursor)
     c3 = db.cursor(MySQLdb.cursors.DictCursor)
     if drop_table:
-        c.execute("DROP TABLE IF EXISTS citations")
-        c1.execute("DROP TABLE IF EXISTS case_info")
-    c2.execute("CREATE TABLE `citations`( `id` int(11) NOT NULL, `citation_id` int(11) NOT NULL AUTO_INCREMENT, `citation_type` int(11) DEFAULT NULL, `year` int (11) DEFAULT NULL, `source_country_id` int(11) DEFAULT NULL, `source_court_id` int(11) DEFAULT NULL, `country_id` int(11) DEFAULT NULL, `court_code` int(11) DEFAULT NULL, `court_id` int(11) DEFAULT NULL, `intl_crt_id` int(11) DEFAULT NULL, `treaty_id` int(11) DEFAULT NULL, `softlaw_id` int(11) DEFAULT NULL, `context` varchar(2000) DEFAULT NULL, `source_file_name` varchar(100) DEFAULT NULL, PRIMARY KEY (`id`,`citation_id`))ENGINE=MyISAM DEFAULT CHARSET=utf8")
-    c3.execute("CREATE TABLE `case_info`(`id` int(11) NOT NULL, `case_id` varchar(100) DEFAULT NULL,`decision_date` varchar(100) DEFAULT NULL, `participant_name` varchar(2000) DEFAULT NULL, `country_id` int(11) DEFAULT NULL, `year` int (11) DEFAULT NULL, `source_file_name` varchar(100) DEFAULT NULL, PRIMARY KEY (`id`) )ENGINE=MyISAM DEFAULT CHARSET=utf8")
+        c.execute("DROP TABLE IF EXISTS citations_test")
+        c1.execute("DROP TABLE IF EXISTS case_info_test")
+    c2.execute("CREATE TABLE `citations_test`( `id` int(11) NOT NULL, `citation_id` int(11) NOT NULL AUTO_INCREMENT, `citation_type` int(11) DEFAULT NULL, `year` int (11) DEFAULT NULL, `source_country_id` int(11) DEFAULT NULL, `source_court_id` int(11) DEFAULT NULL, `country_id` int(11) DEFAULT NULL, `court_code` int(11) DEFAULT NULL, `court_id` int(11) DEFAULT NULL, `intl_crt_id` int(11) DEFAULT NULL, `treaty_id` int(11) DEFAULT NULL, `softlaw_id` int(11) DEFAULT NULL, `context` varchar(2000) DEFAULT NULL, `source_file_name` varchar(100) DEFAULT NULL, PRIMARY KEY (`id`,`citation_id`))ENGINE=MyISAM DEFAULT CHARSET=utf8")
+    c3.execute("CREATE TABLE `case_info_test`(`id` int(11) NOT NULL, `case_id` varchar(100) DEFAULT NULL,`decision_date` varchar(100) DEFAULT NULL, `participant_name` varchar(2000) DEFAULT NULL, `country_id` int(11) DEFAULT NULL, `year` int (11) DEFAULT NULL, `source_file_name` varchar(100) DEFAULT NULL, PRIMARY KEY (`id`) )ENGINE=MyISAM DEFAULT CHARSET=utf8")
 
 
 def unicode_csv_reader(utf8_data, dialect=csv.excel, **kwargs):
