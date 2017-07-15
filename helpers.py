@@ -24,7 +24,7 @@ import MySQLdb.cursors
 
 
 def connectDb(db_name, db_password):
-    engine = create_engine("mysql+mysqldb://root:%s@localhost/%s?charset=utf8" % (db_password, db_name), encoding='utf-8')
+    engine = create_engine("mysql+mysqldb://root:%s@localhost/%s?charset=utf8" % (db_password, db_name), encoding='utf-8', pool_size=20)
     return engine
 
 
