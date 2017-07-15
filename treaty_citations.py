@@ -82,8 +82,11 @@ def insertTreatyData(country_name, year, file, fileText, regex_df,
                                    id_num=id_num,
                                    file=file, country_df=country_df)
         if not treatyData.empty:
-            treatyData.to_sql(name=mysql_table, con=connection_info,
-                              index=False, if_exists='append')
+            return treatyData
+        else:
+            return None
+            # treatyData.to_sql(name=mysql_table, con=connection_info,
+            #                   index=False, if_exists='append')
     except Exception, error:
         print error
         raise

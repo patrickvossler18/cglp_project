@@ -1149,8 +1149,9 @@ def insertCaseRefData(case_info, country_name, country_df, year, id,
                                              'participant_name', 'country_id',
                                              'year', 'id', 'source_file_name'])
         case_info_df.loc[0] = case_info_list
-        case_info_df.to_sql(name=mysql_table, con=connection_info,
-                            index=False, if_exists='append')
+        return case_info_df
+        # case_info_df.to_sql(name=mysql_table, con=connection_info,
+        #                     index=False, if_exists='append')
     except Exception, error:
         print error
         raise

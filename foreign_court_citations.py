@@ -104,8 +104,11 @@ def insertForeignCourtsData(country_name, year, file, fileText, regex_df,
                                              file=file,
                                              country_df=country_df)
         if not foreignCourts.empty:
-            foreignCourts.to_sql(name=mysql_table, con=connection_info,
-                                 index=False, if_exists='append')
+            return foreignCourts
+        else:
+            return None
+            # foreignCourts.to_sql(name=mysql_table, con=connection_info,
+            #                      index=False, if_exists='append')
     except Exception, error:
         print error
         raise
