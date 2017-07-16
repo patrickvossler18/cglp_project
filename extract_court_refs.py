@@ -527,38 +527,40 @@ def extractPeruCourtReferences(file_path):
                 ParticipantName = ParticipantName.upper().replace('CASO', '').replace(':', '')
             if len(extractedText) > 4:
                 spanishDate = extractedText.strip()
-                splitDate = spanishDate.split(',')[1]
-                year = ''
-                if "de dos mil" in splitDate:
-                    startIndex = splitDate.index('de dos mil')
-                    yearString = splitDate[startIndex:]
-                    yearString = yearString.replace('.', '')
-                    if yearString in translations.spanishtoEngDosMil.keys():
-                        year = translations.spanishtoEngDosMil.get(yearString)
-                    splitDate = splitDate.replace(yearString, '')
-                if "de mil" in splitDate:
-                    startIndex = splitDate.index('de mil')
-                    yearString = splitDate[startIndex:]
-                    yearString = yearString.replace('.', '')
-                    if yearString in translations.spanishtoEngDeMil.keys():
-                        year = translations.spanishtoEngDeMil.get(yearString)
-                    splitDate = splitDate.replace(yearString, '')
-                month = ''
-                for key, value in translations.spanishtoEngMonths.items():
-                    if key.decode('utf-8') in splitDate:
-                        month = value
-                        monthString = key
-                        splitDate = splitDate.replace(monthString, '')
-                        break
-                splitDate = splitDate.replace("de", "")
-                splitDate = splitDate.replace(".", "")
-                splitDate = splitDate.replace(" ", "")
-                day = ''
-                for key, value in translations.spanishtoEngNum.items():
-                    if key.decode('utf-8') in splitDate:
-                        day = value
-                        break
-                DecisionDate = day+" "+month+" "+year
+                splitedDate = spanishDate.split(',')
+                if len(splitedDate) > 1:
+                    splitDate = splitedDate[1]
+                    year = ''
+                    if "de dos mil" in splitDate:
+                        startIndex = splitDate.index('de dos mil')
+                        yearString = splitDate[startIndex:]
+                        yearString = yearString.replace('.', '')
+                        if yearString in translations.spanishtoEngDosMil.keys():
+                            year = translations.spanishtoEngDosMil.get(yearString)
+                        splitDate = splitDate.replace(yearString, '')
+                    if "de mil" in splitDate:
+                        startIndex = splitDate.index('de mil')
+                        yearString = splitDate[startIndex:]
+                        yearString = yearString.replace('.', '')
+                        if yearString in translations.spanishtoEngDeMil.keys():
+                            year = translations.spanishtoEngDeMil.get(yearString)
+                        splitDate = splitDate.replace(yearString, '')
+                    month = ''
+                    for key, value in translations.spanishtoEngMonths.items():
+                        if key.decode('utf-8') in splitDate:
+                            month = value
+                            monthString = key
+                            splitDate = splitDate.replace(monthString, '')
+                            break
+                    splitDate = splitDate.replace("de", "")
+                    splitDate = splitDate.replace(".", "")
+                    splitDate = splitDate.replace(" ", "")
+                    day = ''
+                    for key, value in translations.spanishtoEngNum.items():
+                        if key.decode('utf-8') in splitDate:
+                            day = value
+                            break
+                    DecisionDate = day+" "+month+" "+year
             else:
                 DecisionDate = None
         return CaseId, DecisionDate, ParticipantName
