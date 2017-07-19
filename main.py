@@ -14,7 +14,7 @@ import multiprocessing as mp
 import uuid
 
 
-def insertData(file_info):
+def insertData(file_info,country):
     file = file_info[0]
     ID_VAR = file_info[1]
     year = file_info[2]
@@ -116,7 +116,7 @@ for country in COUNTRY_LIST:
         try:
             print year
             # data = list(zip(folder, list(range(BATCH_START, BATCH_START + len(folder)+1)), [year] * len(folder)))
-            results = pool.map(insertData, list(zip(folder, [str(uuid.uuid4()) for i in range(len(folder))], [year] * len(folder))))
+            results = pool.map(insertData, list(zip(folder, [str(uuid.uuid4()) for i in range(len(folder))], [year] * len(folder), [country] * len(folder))))
             BATCH_START += len(folder)
             for result in results:
                 if result is not None:
