@@ -14,10 +14,11 @@ import multiprocessing as mp
 import uuid
 
 
-def insertData(file_info,country):
+def insertData(file_info):
     file = file_info[0]
     ID_VAR = file_info[1]
     year = file_info[2]
+    country = file_info[3]
     if country == 'United Kingdom':
                     for function in cr.countryRefFunctions[country]:
                         case = function(file)
