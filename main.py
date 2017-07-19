@@ -6,13 +6,12 @@ import intl_court_citations as ic
 import treaty_citations as tc
 import foreign_court_citations as fc
 import extract_court_refs as cr
-from tqdm import tqdm
 import getopt
 # import logging
 from time import gmtime, strftime
 import csv
 import multiprocessing as mp
-import pandas as pd
+import uuid
 
 
 def insertData(file_info):
@@ -107,7 +106,7 @@ if __name__ == '__main__':
     error_log = []
     pool = mp.Pool()
     run_start_time = strftime("%d-%m-%Y %H:%M:%S", gmtime())
-    for country in [COUNTRY_LIST[0]]:
+    for country in COUNTRY_LIST:
         print country
         countryFiles = helpers.getCountryFiles(DATA_FOLDER, country)
         if country == 'USA':
