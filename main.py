@@ -117,25 +117,28 @@ for country in COUNTRY_LIST:
             print year
             results = pool.map(insertData, list(zip(folder, [str(uuid.uuid4()) for i in range(len(folder))], [year] * len(folder), [country] * len(folder))))
             for result in results:
-                if result is not None:
-                    if result[0] is not None:
-                        result[0].to_sql(name=CASE_TABLE_NAME, con=ENGINE,
-                                         index=False, if_exists='append')
-                    if result[1] is not None:
-                        result[1].to_sql(name=CITATION_TABLE_NAME, con=ENGINE,
-                                         index=False, if_exists='append')
-                    if result[2] is not None:
-                        result[2].to_sql(name=CITATION_TABLE_NAME, con=ENGINE,
-                                         index=False, if_exists='append')
-                    if result[3] is not None:
-                        result[3].to_sql(name=CITATION_TABLE_NAME, con=ENGINE,
-                                         index=False, if_exists='append')
-                    if result[4] is not None:
-                        result[4].to_sql(name=CITATION_TABLE_NAME, con=ENGINE,
-                                         index=False, if_exists='append')
+                if isinstance(result, Exception):
+                    print "Error: %s" % result
+                else:
+                    if result is not None:
+                        if result[0] is not None:
+                            result[0].to_sql(name=CASE_TABLE_NAME, con=ENGINE,
+                                             index=False, if_exists='append')
+                        if result[1] is not None:
+                            result[1].to_sql(name=CITATION_TABLE_NAME, con=ENGINE,
+                                             index=False, if_exists='append')
+                        if result[2] is not None:
+                            result[2].to_sql(name=CITATION_TABLE_NAME, con=ENGINE,
+                                             index=False, if_exists='append')
+                        if result[3] is not None:
+                            result[3].to_sql(name=CITATION_TABLE_NAME, con=ENGINE,
+                                             index=False, if_exists='append')
+                        if result[4] is not None:
+                            result[4].to_sql(name=CITATION_TABLE_NAME, con=ENGINE,
+                                             index=False, if_exists='append')
         except Exception, e:
             print e
-            error_log.append('%s, %s, %s' % (country, file, e))
+            error_log.append('%s, %s' % (country, e))
             pass
 
 if len(error_log) > 0:
