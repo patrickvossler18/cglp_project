@@ -1130,7 +1130,7 @@ countryRefFunctions = {
     'Papua New Guinea': extractPapaNewGuineaCourtReferences,
     'Peru': extractPeruCourtReferences,
     'Philippines': extractPhilippinesCourtReferences,
-    'Spain' : extractSpainCourtReferences,
+    'Spain': extractSpainCourtReferences,
     'South Africa': extractSouthAfricaCourtReferences,
     'Switzerland': extractSwitzerlandCourtReferences,
     'Uganda': extractUgandaCourtReferences,
