@@ -620,10 +620,27 @@ def extractSpainCourtReferences(file_path):
             extractedText = title_text.text_content()
             extractedElements = extractedText.split('SENTENCIA ')
             CaseId = extractedElements[len(extractedElements) - 1]
-        extractedDecisionDate = html_text.find("/html/body/div[@id='wrapper']/section[@id='main']/div[1]/div[3]/fieldset[1]/table/tr[5]//td[2]/text()")
-        if extractedDecisionDate is not None:
-            DecisionDate = extractedDecisionDate.text_content()
-            DecisionDate = re.sub('\s+', '', DecisionDate)
+        decisionDateString = html_text.find(".//li[@id='resolucion-identifier']")
+        if decisionDateString is not None:
+            splitString = decisionDateString.text_content().split(',')
+            if len(splitString) > 1:
+                spanishDate = splitString[1].strip()
+                year = ''
+                yearString = re.compile("[0-9]{4}")
+                if yearString.search(spanishDate) is not None:
+                    year = yearString.search(spanishDate).group()
+                month = ''
+                for key, value in translations.spanishtoEngMonths.items():
+                    if key.decode('utf-8') in spanishDate:
+                        month = value
+                        monthString = key
+                        spanishDate = spanishDate.replace(monthString, '')
+                        break
+                day = ''
+                dayString = re.compile("(0[1-9]|[0-9]+)")
+                if dayString.search(spanishDate) is not None:
+                    day = dayString.search(spanishDate).group()
+                DecisionDate = day+" "+month+" "+year
         return CaseId, DecisionDate, ParticipantName
     except Exception, e:
         print e
