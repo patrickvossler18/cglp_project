@@ -637,7 +637,7 @@ def extractSpainCourtReferences(file_path):
                         spanishDate = spanishDate.replace(monthString, '')
                         break
                 day = ''
-                dayString = re.compile("(0[1-9]|[0-9]+)")
+                dayString = re.compile("([1-9]{1}|[0-9]{2})")
                 if dayString.search(spanishDate) is not None:
                     day = dayString.search(spanishDate).group()
                 DecisionDate = day+" "+month+" "+year
