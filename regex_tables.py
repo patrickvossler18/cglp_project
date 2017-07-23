@@ -50,7 +50,7 @@ def createForeignCourtsDf(folder_path=None, file_name=None):
     return country_names, court_names, regex_df
 
 
-def createIntlCourtsRegexDf(folder_path=None,file_name=None):
+def createIntlCourtsRegexDf(folder_path=None, file_name=None):
     # Get regex table
     file_name = 'intl_courts_regex_20161003.csv'
     regex_table = []
@@ -69,7 +69,7 @@ def createIntlCourtsRegexDf(folder_path=None,file_name=None):
     return intl_court_names, regex_df
 
 
-def createTreatiesRegexDf(folder_path=None,file_name=None):
+def createTreatiesRegexDf(folder_path=None, file_name=None):
     # Get regex table
     file_name = 'treaties_regex_20161003.csv'
     regex_table = []

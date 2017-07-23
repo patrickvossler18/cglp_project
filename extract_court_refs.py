@@ -1159,8 +1159,8 @@ countryRefFunctions = {
 }
 
 
-def insertCaseRefData(case_info, country_name, country_df, year, id, 
-                      source_file, mysql_table, connection_info):
+def getCaseRefData(case_info, country_name, country_df, year, id,
+                   source_file, mysql_table, connection_info):
     try:
         case_info_list = list(case_info)
         case_info_list.extend([country_df.loc[country_name][0], year, id])
@@ -1170,20 +1170,6 @@ def insertCaseRefData(case_info, country_name, country_df, year, id,
                                              'year', 'id', 'source_file_name'])
         case_info_df.loc[0] = case_info_list
         return case_info_df
-        # case_info_df.to_sql(name=mysql_table, con=connection_info,
-        #                     index=False, if_exists='append')
     except Exception, error:
         print error
         raise
-
-
-# # error = True
-# files = helpers.getCountryFiles('/Users/patrick/Dropbox/Fall 2016/SPEC/', 'Canada')
-# for year, folder in files.items():
-#     for file in folder:
-#         try:
-#             ret = extractBelgiumCourtReferences(file)
-#         except Exception, e:
-#             print e
-#             print file
-#             raise
