@@ -4,7 +4,8 @@ import citation_data as cd
 import extract_court_refs as cr
 from time import gmtime, strftime
 import csv
-import multiprocessing as mp
+# import multiprocessing as mp
+import pathos.multiprocessing as mp
 import uuid
 import getopt
 import sys
