@@ -103,22 +103,22 @@ def getReferences(REGEX_FOLDER, DATA_FOLDER, pool):
                                                  index=False,
                                                  if_exists='append')
                             if result[1] is not None:
-                                result[1].to_sql(name=CASE_TABLE_NAME,
+                                result[1].to_sql(name=CITATION_TABLE_NAME,
                                                  con=ENGINE,
                                                  index=False,
                                                  if_exists='append')
                             if result[2] is not None:
-                                result[2].to_sql(name=CASE_TABLE_NAME,
+                                result[2].to_sql(name=CITATION_TABLE_NAME,
                                                  con=ENGINE,
                                                  index=False,
                                                  if_exists='append')
                             if result[3] is not None:
-                                result[3].to_sql(name=CASE_TABLE_NAME,
+                                result[3].to_sql(name=CITATION_TABLE_NAME,
                                                  con=ENGINE,
                                                  index=False,
                                                  if_exists='append')
                             if result[4] is not None:
-                                result[4].to_sql(name=CASE_TABLE_NAME,
+                                result[4].to_sql(name=CITATION_TABLE_NAME,
                                                  con=ENGINE,
                                                  index=False,
                                                  if_exists='append')
