@@ -5,7 +5,7 @@ import extract_court_refs as cr
 from time import gmtime, strftime
 import csv
 # import multiprocessing as mp
-import pathos.multiprocessing as mp
+from pathos.multiprocessing import ProcessingPool
 import uuid
 import getopt
 import sys
@@ -128,7 +128,7 @@ def getReferences(REGEX_FOLDER, DATA_FOLDER, pool):
             except Exception, e:
                 print e
                 error_log.append('%s, %s' % (country, e))
-                break
+                raise
 
     if len(error_log) > 0:
         start_time = strftime("%d-%m-%Y", gmtime())
@@ -177,7 +177,7 @@ if __name__ == "__main__":
         elif o in ["-n", "--country_name"]:
             COUNTRY_LIST = [a]
     run_start_time = strftime("%d-%m-%Y %H:%M:%S", gmtime())
-    pool = mp.Pool()
+    pool = ProcessingPool(nodes=4)
     getReferences(REGEX_FOLDER, DATA_FOLDER, pool)
     run_end_time = strftime("%d-%m-%Y %H:%M:%S", gmtime())
     print run_start_time, run_end_time
