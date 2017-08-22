@@ -178,44 +178,6 @@ def apply_packed_function_for_map((dumped_function, item, args, kwargs),):
 
 
 def pack_function_for_map(target_function, items, *args, **kwargs):
-    """
-    Pack function and arguments to object that can be sent from one
-    multiprocessing.Process to another. The main problem is:
-        «multiprocessing.Pool.map*» or «apply*»
-        cannot use class methods or closures.
-    It solves this problem with «dill».
-    It works with target function as argument, dumps it («with dill»)
-    and returns dumped function with arguments of target function.
-    For more performance we dump only target function itself
-    and don't dump its arguments.
-    How to use (pseudo-code):
-
-        ~>>> import multiprocessing
-        ~>>> images = [...]
-        ~>>> pool = multiprocessing.Pool(100500)
-        ~>>> features = pool.map(
-        ~...     *pack_function_for_map(
-        ~...         super(Extractor, self).extract_features,
-        ~...         images,
-        ~...         type='png'
-        ~...         **options,
-        ~...     )
-        ~... )
-        ~>>>
-
-    :param target_function:
-        function, that you want to execute like  target_function(item, *args, **kwargs).
-    :param items:
-        list of items for map
-    :param args:
-        positional arguments for target_function(item, *args, **kwargs)
-    :param kwargs:
-        named arguments for target_function(item, *args, **kwargs)
-    :return: tuple(function_wrapper, dumped_items)
-        It returs a tuple with
-            * function wrapper, that unpack and call target function;
-            * list of packed target function and its' arguments.
-    """
     dumped_function = dill.dumps(target_function)
     dumped_items = [(dumped_function, item, args, kwargs) for item in items]
     return apply_packed_function_for_map, dumped_items
