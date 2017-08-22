@@ -9,6 +9,7 @@ import pathos.multiprocessing as mp
 import uuid
 import getopt
 import sys
+import traceback
 
 
 def getReferences(REGEX_FOLDER, DATA_FOLDER, pool):
@@ -71,6 +72,7 @@ def getReferences(REGEX_FOLDER, DATA_FOLDER, pool):
                 return case_res, softLaw, intlCourt, treaty, foreignCourt
         except Exception as e:
             raise Exception(repr(e), file_info[0])
+            traceback.print_exc()
 
     softlaw_names, soft_law_regex_df = rt.createSoftLawRegexDf(folder_path=REGEX_FOLDER, file_name='softlaw_regex_20161003.csv')
     intl_court_names, intl_court_regex_df = rt.createIntlCourtsRegexDf(folder_path=REGEX_FOLDER, file_name='intl_courts_regex_20161003.csv')
