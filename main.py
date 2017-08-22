@@ -71,6 +71,7 @@ def getReferences(REGEX_FOLDER, DATA_FOLDER, pool):
                                                           country_df=country_df)
                 return case_res, softLaw, intlCourt, treaty, foreignCourt
         except Exception as e:
+            e
             raise Exception(repr(e), file_info[0])
             traceback.print_exc()
 
