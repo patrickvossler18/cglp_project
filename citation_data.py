@@ -1,6 +1,7 @@
 import re
 import os
 import pandas as pd
+import itertools
 
 
 def findallCitationMatches(text, ref_terms, term_idx=0):
@@ -108,7 +109,7 @@ def findallForeignCourtMatches(text, country_names, court_names, cntry_name):
     return results
 
 
-def getForeignCourtsData(text, regex_df, country_names, court_names, id_num, file,
+def getForeignCourtsData(text, regex_df, country_names, court_names, id_string, file,
                          country_df, country_name=None, year=None):
     '''
     Inputs:
@@ -137,7 +138,7 @@ def getForeignCourtsData(text, regex_df, country_names, court_names, id_num, fil
             merged_results.drop(['level_1', 'level_0'], inplace=True, axis=1)
             merged_results['year'] = year
             merged_results['source_file_name'] = os.path.basename(file)
-            merged_results['id'] = id_num
+            merged_results['id'] = id_string
             merged_results['source_country_id'] = country_df.loc[country_name][0]
             merged_results = merged_results.rename_axis(None)
             # merged_results.drop(['index'],inplace=True,axis=1)

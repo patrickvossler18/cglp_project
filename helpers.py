@@ -21,6 +21,7 @@ import time
 import cchardet
 import MySQLdb as mysql
 import MySQLdb.cursors
+import dill
 
 
 def connectDb(db_name, db_password):
@@ -160,3 +161,23 @@ def convert_encoding(data, new_coding='UTF-8'):
     if new_coding.upper() != encoding.upper():
         data = data.decode(encoding, data).encode(new_coding)
     return data
+
+
+def apply_packed_function_for_map((dumped_function, item, args, kwargs),):
+    """
+    Unpack dumped function as target function and call it with arguments.
+
+    :param (dumped_function, item, args, kwargs):
+        a tuple of dumped function and its arguments
+    :return:
+        result of target function
+    """
+    target_function = dill.loads(dumped_function)
+    res = target_function(item, *args, **kwargs)
+    return res
+
+
+def pack_function_for_map(target_function, items, *args, **kwargs):
+    dumped_function = dill.dumps(target_function)
+    dumped_items = [(dumped_function, item, args, kwargs) for item in items]
+    return apply_packed_function_for_map, dumped_items
