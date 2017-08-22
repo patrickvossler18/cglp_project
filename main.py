@@ -154,8 +154,8 @@ if __name__ == "__main__":
                     'Philippines', 'South Africa', 'Spain', 'Switzerland',
                     'Uganda', 'UK', 'USA', 'Zimbabwe']
     INCOMPLETE_COUNTRIES = ['Latvia']
-    CITATION_TABLE_NAME = 'citations'
-    CASE_TABLE_NAME = 'case_info'
+    CITATION_TABLE_NAME = 'citations_test'
+    CASE_TABLE_NAME = 'case_info_test'
     DATABASE_NAME = 'cglp'
     PASSWORD = 'cglp'
 
