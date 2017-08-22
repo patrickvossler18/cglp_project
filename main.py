@@ -94,7 +94,7 @@ def getReferences(REGEX_FOLDER, DATA_FOLDER, pool):
         for year, folder in countryFiles.items():
             try:
                 print year
-                results = pool.map(insertData, list(zip(folder, [str(uuid.uuid4()) for i in range(len(folder))], [year] * len(folder), [country] * len(folder))))
+                results = pool.map_async(insertData, list(zip(folder, [str(uuid.uuid4()) for i in range(len(folder))], [year] * len(folder), [country] * len(folder))))
                 for result in results:
                     if isinstance(result, Exception):
                         print "Error: %s" % result
