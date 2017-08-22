@@ -5,7 +5,7 @@ import extract_court_refs as cr
 from time import gmtime, strftime
 import csv
 import multiprocessing as mp
-from pathos.multiprocessing import ProcessingPool
+# from pathos.multiprocessing import ProcessingPool
 import uuid
 import getopt
 import sys
