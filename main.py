@@ -59,7 +59,7 @@ def getReferences(REGEX_FOLDER, DATA_FOLDER, pool):
                                             ref_terms=treaty_names,
                                             id_string=ID_VAR,
                                             country_df=country_df)
-                foreignCourt = cd.insertForeignCourtsData(country_name=country,
+                foreignCourt = cd.getForeignCourtsData(country_name=country,
                                                           year=year,
                                                           file=file,
                                                           text=fileText,
