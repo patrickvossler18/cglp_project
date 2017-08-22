@@ -126,7 +126,7 @@ def getReferences(REGEX_FOLDER, DATA_FOLDER, pool):
             except Exception, e:
                 print e
                 error_log.append('%s, %s' % (country, e))
-                pass
+                break
 
     if len(error_log) > 0:
         start_time = strftime("%d-%m-%Y", gmtime())
