@@ -4,7 +4,7 @@ import citation_data as cd
 import extract_court_refs as cr
 from time import gmtime, strftime
 import csv
-# import multiprocessing as mp
+import multiprocessing as mp
 from pathos.multiprocessing import ProcessingPool
 import uuid
 import getopt
@@ -94,7 +94,7 @@ def getReferences(REGEX_FOLDER, DATA_FOLDER, pool):
         for year, folder in countryFiles.items():
             try:
                 print year
-                results = pool.map_async(insertData, list(zip(folder, [str(uuid.uuid4()) for i in range(len(folder))], [year] * len(folder), [country] * len(folder))))
+                results = pool.map(insertData, list(zip(folder, [str(uuid.uuid4()) for i in range(len(folder))], [year] * len(folder), [country] * len(folder))))
                 for result in results:
                     if isinstance(result, Exception):
                         print "Error: %s" % result
@@ -178,7 +178,7 @@ if __name__ == "__main__":
         elif o in ["-n", "--country_name"]:
             COUNTRY_LIST = [a]
     run_start_time = strftime("%d-%m-%Y %H:%M:%S", gmtime())
-    pool = ProcessingPool(nodes=4)
+    pool = mp.Pool()
     getReferences(REGEX_FOLDER, DATA_FOLDER, pool)
     run_end_time = strftime("%d-%m-%Y %H:%M:%S", gmtime())
     print run_start_time, run_end_time
