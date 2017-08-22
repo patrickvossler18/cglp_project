@@ -129,6 +129,7 @@ def getReferences(REGEX_FOLDER, DATA_FOLDER, pool):
                 print e
                 error_log.append('%s, %s' % (country, e))
                 raise
+                traceback.print_exc()
 
     if len(error_log) > 0:
         start_time = strftime("%d-%m-%Y", gmtime())
