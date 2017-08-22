@@ -1,6 +1,7 @@
 import re
 import os
 import pandas as pd
+import itertools
 
 
 def findallCitationMatches(text, ref_terms, term_idx=0):
