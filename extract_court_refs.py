@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from bs4 import BeautifulSoup
 import lxml.html as lh
+from lxml import etree
 import pandas as pd
 from dateutil.parser import parse
 import re
@@ -620,10 +621,27 @@ def extractSpainCourtReferences(file_path):
             extractedText = title_text.text_content()
             extractedElements = extractedText.split('SENTENCIA ')
             CaseId = extractedElements[len(extractedElements) - 1]
-        extractedDecisionDate = html_text.find("/html/body/div[@id='wrapper']/section[@id='main']/div[1]/div[3]/fieldset[1]/table/tr[5]//td[2]/text()")
-        if extractedDecisionDate is not None:
-            DecisionDate = extractedDecisionDate.text_content()
-            DecisionDate = re.sub('\s+', '', DecisionDate)
+        decisionDateString = html_text.find(".//li[@id='resolucion-identifier']")
+        if decisionDateString is not None:
+            splitString = decisionDateString.text_content().split(',')
+            if len(splitString) > 1:
+                spanishDate = splitString[1].strip()
+                year = ''
+                yearString = re.compile("[0-9]{4}")
+                if yearString.search(spanishDate) is not None:
+                    year = yearString.search(spanishDate).group()
+                month = ''
+                for key, value in translations.spanishtoEngMonths.items():
+                    if key.decode('utf-8') in spanishDate:
+                        month = value
+                        monthString = key
+                        spanishDate = spanishDate.replace(monthString, '')
+                        break
+                day = ''
+                dayString = re.compile("([1-9]{1}|[0-9]{2})")
+                if dayString.search(spanishDate) is not None:
+                    day = dayString.search(spanishDate).group()
+                DecisionDate = day+" "+month+" "+year
         return CaseId, DecisionDate, ParticipantName
     except Exception, e:
         print e
@@ -833,11 +851,11 @@ def extractUnitedStatesCourtReferences(file_path):
     CaseId = ''
     DecisionDate = ''
     decisionString = None
+    participantString = ''
     try:
         file_content = helpers.getFileText(file_path, html=False)
         if file_content:
             html_text = lh.fromstring(file_content.decode('utf-8', 'ignore'))
-            extractedText = html_text.find(".//center")
             details1 = html_text.findall(".//center")
             caseIdString = ''
             if len(details1) > 0:
@@ -847,27 +865,30 @@ def extractUnitedStatesCourtReferences(file_path):
                         break
                 for center in details1:
                     if "[" in center.text_content():
-                        decisionString = center.text_content()
-                        break
+                        date = re.search('\[(.*)\]', center.text_content())
+                        if date is not None:
+                            decisionString = date.group(1)
+                            break
+                for center in details1:
+                    for child in center:
+                        if "<br/>" in etree.tostring(child):
+                            participantString = (child.text_content() + child.getnext().text_content()).strip().replace('\n', ' ').replace('\r', '')
+                if len(participantString) == 0:
+                    for center in details1:
+                        if "v." in center.text_content():
+                            participantString = center.text_content().strip().replace('\n', ' ').replace('\r', '')
+                if len(participantString) > 0:
+                    ParticipantName = participantString
             if len(caseIdString) > 0:
                 caseSearchString = re.compile('No\.\s\d+\-\d+|No\.\s\d{2,3}|Nos\.\s\d+.+\s\d{2,3}')
                 if caseSearchString.search(caseIdString) is not None:
                     caseString = caseSearchString.search(caseIdString).group().replace('No.', '').replace('Nos.', '').strip()
                     CaseId = caseString
                 decidedDateIdx = caseIdString.find('Decided')
-                if decidedDateIdx != -1:
+                if decidedDateIdx != -1 and decisionString is None:
                     DecisionDate = caseIdString[decidedDateIdx+8:decidedDateIdx+24].replace('.', '').strip()
-            if len(caseIdString) == 0 and decisionString is not None:
-                DecisionDate = decisionString.replace('[', '').replace(']', '')
-            if extractedText is not None:
-                participantString = extractedText.text_content().strip()
-                participantSplit = participantString.split('\n')
-                for split in participantSplit:
-                    if "v." in split.lower():
-                        ParticipantName = split.strip()
-                        break
-                if len(ParticipantName) > 5000:
-                    ParticipantName = ''
+            if len(caseIdString) == 0 and decisionString is not None and len(DecisionDate) == 0:
+                DecisionDate = decisionString
         return CaseId, DecisionDate, ParticipantName
     except Exception, e:
             print e
@@ -1130,7 +1151,7 @@ countryRefFunctions = {
     'Papua New Guinea': extractPapaNewGuineaCourtReferences,
     'Peru': extractPeruCourtReferences,
     'Philippines': extractPhilippinesCourtReferences,
-    'Spain' : extractSpainCourtReferences,
+    'Spain': extractSpainCourtReferences,
     'South Africa': extractSouthAfricaCourtReferences,
     'Switzerland': extractSwitzerlandCourtReferences,
     'Uganda': extractUgandaCourtReferences,
@@ -1157,15 +1178,3 @@ def insertCaseRefData(case_info, country_name, country_df, year, id,
     except Exception, error:
         print error
         raise
-
-
-# # error = True
-# files = helpers.getCountryFiles('/Users/patrick/Dropbox/Fall 2016/SPEC/', 'Canada')
-# for year, folder in files.items():
-#     for file in folder:
-#         try:
-#             ret = extractBelgiumCourtReferences(file)
-#         except Exception, e:
-#             print e
-#             print file
-#             raise
