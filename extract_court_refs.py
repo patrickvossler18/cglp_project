@@ -95,6 +95,8 @@ def extractCanadaCourtReference(file_path):
         print e
         raise
 
+# Check Switzerland, Spain, Chile, Peru, India
+# Add tally for most recent run
 
 def extractChileCourtReferences(file_path):
     try:
@@ -1179,14 +1181,24 @@ countryRefFunctions = {
 def insertCaseRefData(case_info, country_name, country_df, year, id,
                       source_file, mysql_table, connection_info):
     try:
+        case_info_fixed = []
         case_info_list = list(case_info)
-        case_info_list = [x.encode('utf-8') if x is not None and x is not isinstance(x, (int, long)) else x for x in case_info_list]
-        case_info_list.extend([country_df.loc[country_name][0], year, id])
-        case_info_list.extend([os.path.basename(source_file)])
+        case_info_list = [x.encode('utf-8') if x is not None and x is not isinstance(x, (int, long, str, unicode)) else x for x in case_info_list]
+        for x in case_info_list:
+            if x is not None and x is not isinstance(x, (int, long)):
+                try:
+                    encoded = x.encode('utf-8')
+                    case_info_fixed.append(encoded)
+                except UnicodeDecodeError:
+                    case_info_fixed.append(x)
+            else:
+                case_info_fixed.append(x)
+        case_info_fixed.extend([country_df.loc[country_name][0], year, id])
+        case_info_fixed.extend([os.path.basename(source_file)])
         case_info_df = pd.DataFrame(columns=['case_id', 'decision_date',
                                              'participant_name', 'country_id',
                                              'year', 'id', 'source_file_name'])
-        case_info_df.loc[0] = case_info_list
+        case_info_df.loc[0] = case_info_fixed
         case_info_df.to_sql(name=mysql_table, con=connection_info,
                             index=False, if_exists='append')
     except Exception, error:
