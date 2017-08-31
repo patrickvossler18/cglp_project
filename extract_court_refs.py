@@ -852,6 +852,7 @@ def extractUnitedStatesCourtReferences(file_path):
     DecisionDate = ''
     decisionString = None
     participantString = ''
+    caseSearchString = re.compile('No\.\s\d+\-\d+|No\.\s\d{2,3}|Nos\.\s\d+.+\s\d{2,3}',re.IGNORECASE)
     try:
         file_content = helpers.getFileText(file_path, html=False)
         if file_content:
@@ -872,7 +873,20 @@ def extractUnitedStatesCourtReferences(file_path):
                 for center in details1:
                     for child in center:
                         if "<br/>" in etree.tostring(child):
-                            participantString = (child.text_content() + child.getnext().text_content()).strip().replace('\n', ' ').replace('\r', '')
+                            participantString = child.text_content().strip()
+                            if child.getnext() is not None:
+                                if len(child.getnext()) > 0:
+                                    participantString += child.getnext().text_content().strip()
+                            participantString = participantString.replace('\n', ' ').replace('\r', '')
+                            participantString = re.sub("\s\s+", " ", participantString)
+                            cert = participantString.lower().find("certiorari")
+                            case_no = caseSearchString.search(participantString)
+                            if cert != -1:
+                                participantString = participantString[:cert]
+                            elif case_no is not None:
+                                case_idx = participantString.lower().find(case_no.group().lower())
+                                if case_idx != -1:
+                                    participantString = participantString[:case_idx]
                 if len(participantString) == 0:
                     for center in details1:
                         if "v." in center.text_content():
@@ -880,7 +894,6 @@ def extractUnitedStatesCourtReferences(file_path):
                 if len(participantString) > 0:
                     ParticipantName = participantString
             if len(caseIdString) > 0:
-                caseSearchString = re.compile('No\.\s\d+\-\d+|No\.\s\d{2,3}|Nos\.\s\d+.+\s\d{2,3}')
                 if caseSearchString.search(caseIdString) is not None:
                     caseString = caseSearchString.search(caseIdString).group().replace('No.', '').replace('Nos.', '').strip()
                     CaseId = caseString
@@ -893,7 +906,16 @@ def extractUnitedStatesCourtReferences(file_path):
     except Exception, e:
             print e
             raise
-
+results = []
+for year, folder in files.items():
+    for file in folder:
+        res = extractUnitedStatesCourtReferences(file)
+        results.append(res)
+        res
+        if res[2] == 'on writ of ':
+            break
+        if len(res[2]) > 1000:
+            break
 
 def extractZimbabweCourtReferences(file_path):
     ParticipantName = ''
