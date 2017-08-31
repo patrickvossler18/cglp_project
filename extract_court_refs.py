@@ -1183,7 +1183,7 @@ def insertCaseRefData(case_info, country_name, country_df, year, id,
     try:
         case_info_fixed = []
         case_info_list = list(case_info)
-        case_info_list = [x.encode('utf-8') if x is not None and x is not isinstance(x, (int, long, str, unicode)) else x for x in case_info_list]
+        # case_info_list = [x.encode('utf-8') if x is not None and x is not isinstance(x, (int, long, str, unicode)) else x for x in case_info_list]
         for x in case_info_list:
             if x is not None and x is not isinstance(x, (int, long)):
                 try:
