@@ -906,16 +906,7 @@ def extractUnitedStatesCourtReferences(file_path):
     except Exception, e:
             print e
             raise
-results = []
-for year, folder in files.items():
-    for file in folder:
-        res = extractUnitedStatesCourtReferences(file)
-        results.append(res)
-        res
-        if res[2] == 'on writ of ':
-            break
-        if len(res[2]) > 1000:
-            break
+
 
 def extractZimbabweCourtReferences(file_path):
     ParticipantName = ''
