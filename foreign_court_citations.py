@@ -12,12 +12,12 @@ def findallForeignCourtMatches(text, country_names, court_names, cntry_name):
     For +/- 10 words use r"(?i)((?:\S+\s+){0,10})\b" + re.escape(search_term)+ r"\b\s*((?:\S+\s+){0,10})"
     '''
     results = []
-    matches = country_names.query(text.encode('utf-8'))
+    matches = fc_country_names.query(text.encode('utf-8'))
     for match in matches:
         country_name = match[1]
         # Remove this condition
         # if country_name != cntry_name:
-        country_string = re.compile(r"(?i)((?:\S+\s+){0,10})\b" + re.escape(country_name)+ r"\b\s*((?:\S+\s+){0,10})", re.IGNORECASE)
+        country_string = re.compile(r"(?i)((?:\S+\s+){0,5})\b" + re.escape(country_name)+ r"\b\s*((?:\S+\s+){0,5})", re.IGNORECASE)
         # use start of match
         match_location = match[0][0]
         buffer_area = 500 + len(country_name)
@@ -33,12 +33,15 @@ def findallForeignCourtMatches(text, country_names, court_names, cntry_name):
             context_string = context.group().replace("\n", "").replace("\r\n", "")
             find_court = court_names.query(context_string.encode('utf-8'))
             court_match = None
-            for result in find_court:
-                if result[1][1] != ' ' and result[1][0] == country_name.strip():
-                    court_match = result[1][1]
+        for result in find_court:
+            if result[1][1] != ' ' and result[1][0] == country_name.strip():
+                court_match = result[1][1]
             if court_match:
-                match = [country_name, court_match, context_string]
-                results.append(match)
+                country_name_re = re.compile(r"\b" + re.escape(country_name) + r"\b", re.IGNORECASE)
+                court_name_re = re.compile(r"\b" + re.escape(court_match) + r"\b", re.IGNORECASE)
+                if country_name_re.search(context_string) is not None and court_name_re.search(context_string) is not None:
+                    match = [country_name, court_match, context_string]
+                    results.append(match)
     results = [list(x) for x in set(tuple(x) for x in results)]
     return results
 
