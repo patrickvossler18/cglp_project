@@ -127,7 +127,7 @@ def getCountryFiles(folder_path, country_name):
                     year = folder[-4:]
                 else:
                     year = folder
-                year_folders[year] = [val for sublist in [[os.path.join(i[0], j) for j in i[2]] for i in os.walk(path)] for val in sublist if '.DS_Store' not in val and '.py' not in val]
+                year_folders[year] = [val for sublist in [[os.path.join(i[0], j) for j in i[2]] for i in os.walk(path)] for val in sublist if '.DS_Store' not in val and '.py' not in val and os.path.basename(val)[0:4] != "_USA"]
     return year_folders
 
 

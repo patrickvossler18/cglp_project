@@ -1,7 +1,22 @@
-SELECT * FROM case_info_test INTO OUTFILE '/tmp/case_info20170721.csv'
+SELECT * FROM case_info INTO OUTFILE '/tmp/case_info20170901.csv'
 FIELDS TERMINATED BY ',' 
 OPTIONALLY ENCLOSED BY '"'
 LINES TERMINATED BY '\n'; 
+
+SELECT id,
+replace(replace(replace(case_id, '\r\n', ' '), '\r', ' '),'""', '"'),
+replace(replace(replace(decision_date, '\r\n', ' '), '\r', ' '),'""', '"'),
+replace(replace(replace(participant_name, '\r\n', ' '), '\r', ' '),'""', '"'),
+country_id,
+year,
+source_file_name
+FROM case_info
+INTO OUTFILE '/tmp/case_info20170911_fix.csv'
+FIELDS TERMINATED BY ',' 
+ESCAPED BY '"' 
+ENCLOSED BY '"' 
+LINES TERMINATED BY '\r\n';
+
 
 SELECT id,
 ifnull(citation_id, ""),
@@ -17,8 +32,8 @@ ifnull(treaty_id, ""),
 ifnull(softlaw_id, ""),
 replace(replace(context,'\r\n',' '),'\r',' '),
 source_file_name
-FROM citations_test
-INTO OUTFILE '/tmp/citations20170721.csv'
+FROM citations
+INTO OUTFILE '/tmp/citations20170901.csv'
 FIELDS TERMINATED BY ',' 
 ESCAPED BY '"' 
 ENCLOSED BY '"' 
