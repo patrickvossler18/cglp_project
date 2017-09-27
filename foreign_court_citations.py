@@ -33,15 +33,15 @@ def findallForeignCourtMatches(text, country_names, court_names, cntry_name):
             context_string = context.group().replace("\n", "").replace("\r\n", "")
             find_court = court_names.query(context_string.encode('utf-8'))
             court_match = None
-        for result in find_court:
-            if result[1][1] != ' ' and result[1][0] == country_name.strip():
-                court_match = result[1][1]
-            if court_match:
-                country_name_re = re.compile(r"\b" + re.escape(country_name) + r"\b", re.IGNORECASE)
-                court_name_re = re.compile(r"\b" + re.escape(court_match) + r"\b", re.IGNORECASE)
-                if country_name_re.search(context_string) is not None and court_name_re.search(context_string) is not None:
-                    match = [country_name, court_match, context_string]
-                    results.append(match)
+            for result in find_court:
+                if result[1][1] != ' ' and result[1][0] == country_name.strip():
+                    court_match = result[1][1]
+                if court_match:
+                    country_name_re = re.compile(r"\b" + re.escape(country_name) + r"\b", re.IGNORECASE)
+                    court_name_re = re.compile(r"\b" + re.escape(court_match) + r"\b", re.IGNORECASE)
+                    if country_name_re.search(context_string) is not None and court_name_re.search(context_string) is not None:
+                        match = [country_name, court_match, context_string]
+                        results.append(match)
     results = [list(x) for x in set(tuple(x) for x in results)]
     return results
 
