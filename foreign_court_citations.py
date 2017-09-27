@@ -12,7 +12,7 @@ def findallForeignCourtMatches(text, country_names, court_names, cntry_name):
     For +/- 10 words use r"(?i)((?:\S+\s+){0,10})\b" + re.escape(search_term)+ r"\b\s*((?:\S+\s+){0,10})"
     '''
     results = []
-    matches = fc_country_names.query(text.encode('utf-8'))
+    matches = country_names.query(text.encode('utf-8'))
     for match in matches:
         country_name = match[1]
         # Remove this condition
